@@ -18,6 +18,7 @@ export default function GameCanvas({
 }) {
   const canvasRef = useRef(null);
   const animIdRef = useRef(null);
+  const framePulseRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -25,6 +26,8 @@ export default function GameCanvas({
     const ctx = canvas.getContext('2d');
 
     const render = () => {
+      framePulseRef.current = (framePulseRef.current + 0.05) % (Math.PI * 2);
+
       // Auto-resize canvas to match displayed size
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
@@ -39,7 +42,7 @@ export default function GameCanvas({
 
       // 1. Draw fingertip trails
       if (trailPoints && trailPoints.length > 0) {
-        drawTrail(ctx, trailPoints, width, height, 'rgba(56, 189, 248, 0.7)');
+        drawTrail(ctx, trailPoints, width, height, 'rgba(56, 189, 248, 0.75)');
       }
 
       // 2. Custom Game Elements Render Callback (targets, balls, drop zones, step prompts)
@@ -53,12 +56,16 @@ export default function GameCanvas({
         trackingData.hands.forEach(hand => {
           const { landmarks, handedness, isPinching, indexTip, thumbTip } = hand;
           const isRight = handedness === 'Right';
-          const primaryColor = isRight ? '#38bdf8' : '#a855f7'; // Cyan for Right, Purple for Left
-          const accentColor = isPinching ? '#f59e0b' : '#10b981'; // Amber if pinching, Emerald if open
+          const primaryColor = isRight ? '#38bdf8' : '#c084fc'; // Cyan for Right hand, Purple for Left hand
+          const primaryGlow = isRight ? 'rgba(56, 189, 248, 0.5)' : 'rgba(192, 132, 252, 0.5)';
+          const accentColor = isPinching ? '#fbbf24' : '#34d399'; // Amber if pinching, Emerald if open
 
-          // Draw skeleton lines
-          ctx.lineWidth = 3;
+          // Draw skeleton lines with glow effect
+          ctx.save();
+          ctx.lineWidth = 3.5;
           ctx.strokeStyle = primaryColor;
+          ctx.shadowColor = primaryGlow;
+          ctx.shadowBlur = 10;
 
           HAND_CONNECTIONS.forEach(([i, j]) => {
             const p1 = landmarks[i];
@@ -70,6 +77,7 @@ export default function GameCanvas({
               ctx.stroke();
             }
           });
+          ctx.restore();
 
           // Draw landmark dots
           landmarks.forEach((pt, idx) => {
@@ -79,13 +87,31 @@ export default function GameCanvas({
             const isIndexTip = idx === 8;
             const isThumbTip = idx === 4;
 
+            ctx.save();
             ctx.beginPath();
-            ctx.arc(px, py, isIndexTip || isThumbTip ? 7 : (isFingertip ? 5 : 3.5), 0, Math.PI * 2);
+            const radius = isIndexTip || isThumbTip ? 8 : (isFingertip ? 6 : 4);
+            ctx.arc(px, py, radius, 0, Math.PI * 2);
             ctx.fillStyle = isIndexTip ? accentColor : primaryColor;
+            ctx.shadowColor = isIndexTip ? accentColor : primaryColor;
+            ctx.shadowBlur = isIndexTip ? 12 : 6;
             ctx.fill();
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 2;
             ctx.strokeStyle = '#ffffff';
             ctx.stroke();
+            ctx.restore();
+
+            // Pulsing target halo around Index Fingertip
+            if (isIndexTip) {
+              const haloRadius = 14 + Math.sin(framePulseRef.current * 2) * 3;
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(px, py, haloRadius, 0, Math.PI * 2);
+              ctx.strokeStyle = accentColor;
+              ctx.lineWidth = 2;
+              ctx.globalAlpha = 0.6;
+              ctx.stroke();
+              ctx.restore();
+            }
           });
 
           // Draw Pinch Visual Feedback between Thumb & Index Tip
@@ -95,19 +121,25 @@ export default function GameCanvas({
 
             if (isPinching) {
               ctx.save();
+              // Outer pulsing glow circle
+              const pulseRadius = 22 + Math.sin(framePulseRef.current * 3) * 3;
               ctx.beginPath();
-              ctx.arc(midX, midY, 18, 0, Math.PI * 2);
-              ctx.fillStyle = 'rgba(245, 158, 11, 0.4)';
+              ctx.arc(midX, midY, pulseRadius, 0, Math.PI * 2);
+              ctx.fillStyle = 'rgba(251, 191, 36, 0.35)';
               ctx.fill();
               ctx.lineWidth = 3;
-              ctx.strokeStyle = '#f59e0b';
+              ctx.strokeStyle = '#fbbf24';
+              ctx.shadowColor = '#fbbf24';
+              ctx.shadowBlur = 15;
               ctx.stroke();
 
-              // Pinch text indicator
-              ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
+              // Pinch text indicator badge
+              ctx.font = 'bold 13px "Fredoka", sans-serif';
               ctx.fillStyle = '#ffffff';
               ctx.textAlign = 'center';
-              ctx.fillText('GRABBED 🖐️', midX, midY - 24);
+              ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+              ctx.shadowBlur = 4;
+              ctx.fillText('GRABBED 🖐️', midX, midY - 30);
               ctx.restore();
             }
           }
@@ -116,21 +148,23 @@ export default function GameCanvas({
           const wrist = landmarks[0];
           if (wrist) {
             const wx = wrist.x * width;
-            const wy = Math.min(height - 20, wrist.y * height + 28);
+            const wy = Math.min(height - 24, wrist.y * height + 32);
 
             ctx.save();
             ctx.font = 'bold 14px "Fredoka", sans-serif';
             const labelText = `${handedness.toUpperCase()} HAND`;
             const textWidth = ctx.measureText(labelText).width;
 
-            ctx.fillStyle = isRight ? 'rgba(56, 189, 248, 0.85)' : 'rgba(168, 85, 247, 0.85)';
-            ctx.roundRect(wx - textWidth / 2 - 8, wy - 14, textWidth + 16, 22, 10);
+            ctx.fillStyle = isRight ? 'rgba(56, 189, 248, 0.9)' : 'rgba(192, 132, 252, 0.9)';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 8;
+            ctx.roundRect(wx - textWidth / 2 - 10, wy - 14, textWidth + 20, 24, 12);
             ctx.fill();
 
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(labelText, wx, wy - 3);
+            ctx.fillText(labelText, wx, wy - 2);
             ctx.restore();
           }
         });
@@ -152,4 +186,3 @@ export default function GameCanvas({
     <canvas ref={canvasRef} className="game-canvas" />
   );
 }
-
