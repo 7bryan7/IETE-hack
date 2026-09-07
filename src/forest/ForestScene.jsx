@@ -1,7 +1,22 @@
 import React, { memo, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Plane, Raycaster, Vector2, Vector3 } from 'three';
-import { checkpoints, objectDefinitions, FOREST_LANDMARKS } from './forestLevels.js';
+import {
+  checkpoints,
+  objectDefinitions,
+  FOREST_LANDMARKS,
+  FIREFLY_CONFIGS,
+  FRUIT_DEFINITIONS,
+  BASKET_POSITION,
+  BRIDGE_PLANK_DEFINITIONS,
+  MEMORY_STONE_DEFINITIONS,
+  GATE_POSITION,
+  BUTTERFLY_RINGS,
+  BUTTERFLY_START,
+  BUTTERFLY_FLOWER,
+  STAR_CRYSTAL_POS,
+  TREE_SHRINE_POS,
+} from './forestLevels.js';
 import { stepForest } from './forestLogic.js';
 
 function Tree({ position, size = 1, broad = false, color = '#508b61' }) {
@@ -13,7 +28,7 @@ function Tree({ position, size = 1, broad = false, color = '#508b61' }) {
 function Rock({ position, scale = [1, 0.7, 0.8] }) {
   return <mesh position={position} scale={scale} rotation={[0.1, 0.6, 0.2]}><dodecahedronGeometry args={[0.8, 0]} /><meshStandardMaterial color="#acb6a4" flatShading /></mesh>;
 }
-const Scenery = memo(function Scenery() {
+const Scenery = memo(function Scenery({ run }) {
   const trees = useMemo(() => Array.from({ length: 30 }, (_, i) => {
     const angle = (i / 30) * Math.PI * 2;
     const radius = 11 + (i % 3) * 2;
@@ -25,7 +40,11 @@ const Scenery = memo(function Scenery() {
     {/* A sandy trail leads across the brook into the clearing. */}
     {[0, 1, 2, 3, 4, 5, 6].map(i => <mesh key={i} rotation={[-Math.PI / 2, 0, 0]} position={[Math.sin(i * 0.7) * 0.5, 0.012, 10 - i * 3]} scale={[1, 1.8, 1]}><circleGeometry args={[1.25, 12]} /><meshStandardMaterial color="#e1d4a2" /></mesh>)}
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.022, -6]}><planeGeometry args={[35, 2.5]} /><meshStandardMaterial color="#83cdd0" roughness={0.25} metalness={0.1} /></mesh>
-    {Array.from({ length: 9 }, (_, i) => <mesh key={i} position={[0, 0.26 + Math.sin(i / 8 * Math.PI) * 0.2, -7.6 + i * 0.4]}><boxGeometry args={[2.5, 0.15, 0.35]} /><meshStandardMaterial color={i % 2 ? '#b58a5c' : '#c7a16d'} /></mesh>)}
+    {Array.from({ length: 9 }, (_, i) => {
+      const bridgeFixed = run?.current?.adventure?.worldState?.bridgeRepaired || (run?.current?.level || 1) > 7;
+      if (!bridgeFixed && i >= 3 && i <= 5) return null;
+      return <mesh key={i} position={[0, 0.26 + Math.sin(i / 8 * Math.PI) * 0.2, -7.6 + i * 0.4]}><boxGeometry args={[2.5, 0.15, 0.35]} /><meshStandardMaterial color={i % 2 ? '#b58a5c' : '#c7a16d'} /></mesh>;
+    })}
     {[-1.3, 1.3].map(x => <group key={x}>{[-7.5, -6, -4.5].map(z => <mesh key={z} position={[x, 0.7, z]}><cylinderGeometry args={[0.08, 0.1, 1.2, 6]} /><meshStandardMaterial color="#9d744e" /></mesh>)}<mesh position={[x, 1.2, -6]}><boxGeometry args={[0.1, 0.12, 3.3]} /><meshStandardMaterial color="#ae8557" /></mesh></group>)}
     {trees.map((tree, i) => <Tree key={i} {...tree} color={['#5e9569', '#6ca575', '#447c62'][i % 3]} />)}
     <Tree position={[-6.5, 0, -0.7]} size={1.2} broad /><Tree position={[7, 0, -3.8]} size={1.1} />
@@ -149,6 +168,7 @@ function GrandMagicTree({ run, reducedMotion }) {
       foliage.current.rotation.y = Math.sin(clock.elapsedTime * 0.12) * 0.05;
     }
   });
+  const restored = run?.current?.adventure?.worldState?.treeRestored;
   return (
     <group position={[0, 0, -16.0]}>
       <mesh position={[0, 3.2, 0]}>
@@ -167,25 +187,25 @@ function GrandMagicTree({ run, reducedMotion }) {
       <group ref={foliage} position={[0, 6.2, 0]}>
         <mesh position={[0, 0, 0]} scale={[4.2, 2.5, 3.8]}>
           <icosahedronGeometry args={[1.5, 1]} />
-          <meshStandardMaterial color="#509b64" flatShading />
+          <meshStandardMaterial color={restored ? '#eab308' : '#509b64'} emissive={restored ? '#facc15' : '#000000'} emissiveIntensity={restored ? 0.35 : 0} flatShading />
         </mesh>
         <mesh position={[0, 1.8, 0]} scale={[3.4, 2.2, 3.2]}>
           <icosahedronGeometry args={[1.4, 1]} />
-          <meshStandardMaterial color="#6ec27b" flatShading />
+          <meshStandardMaterial color={restored ? '#fbbf24' : '#6ec27b'} emissive={restored ? '#fde047' : '#000000'} emissiveIntensity={restored ? 0.45 : 0} flatShading />
         </mesh>
         <mesh position={[0, 3.2, 0]} scale={[2.4, 1.8, 2.4]}>
           <icosahedronGeometry args={[1.2, 1]} />
-          <meshStandardMaterial color="#94e892" flatShading />
+          <meshStandardMaterial color={restored ? '#fef08a' : '#94e892'} emissive={restored ? '#fef08a' : '#000000'} emissiveIntensity={restored ? 0.55 : 0} flatShading />
         </mesh>
       </group>
       <mesh position={[0, 6.0, 0]}>
         <sphereGeometry args={[4.5, 16, 12]} />
-        <meshBasicMaterial color="#aaffcc" transparent opacity={0.06} depthWrite={false} />
+        <meshBasicMaterial color={restored ? '#fef08a' : '#aaffcc'} transparent opacity={restored ? 0.18 : 0.06} depthWrite={false} />
       </mesh>
-      {[0, 1, 2, 3, 4].map(i => (
+      {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
         <mesh key={i} position={[Math.sin(i * 1.5) * 3.2, 4.5 + (i % 3) * 1.2, Math.cos(i * 1.5) * 3.2]}>
-          <octahedronGeometry args={[0.12, 0]} />
-          <meshBasicMaterial color="#fffeb3" />
+          <octahedronGeometry args={[restored ? 0.22 : 0.12, 0]} />
+          <meshBasicMaterial color={restored ? '#ffd700' : '#fffeb3'} />
         </mesh>
       ))}
     </group>
@@ -443,6 +463,414 @@ function Dragonflies({ run, reducedMotion }) {
   );
 }
 
+function FireflySwarm({ run, reducedMotion }) {
+  const meshRefs = useRef([]);
+  useFrame(({ clock }) => {
+    const s = run.current;
+    if (s.level !== 5 && !s.firefliesCaught?.length) return;
+    const t = clock.elapsedTime;
+    FIREFLY_CONFIGS.forEach((ff, i) => {
+      const mesh = meshRefs.current[i];
+      if (!mesh) return;
+      const isCaught = s.firefliesCaught?.includes(ff.id);
+      if (isCaught) {
+        mesh.position.y += 0.05;
+        mesh.scale.setScalar(Math.max(0.01, mesh.scale.x * 0.96));
+        return;
+      }
+      const x = ff.initialPos[0] + Math.sin(t * ff.speed + i) * 0.85;
+      const y = ff.initialPos[1] + Math.sin(t * ff.speed * 1.6 + i * 0.5) * 0.35;
+      const z = ff.initialPos[2] + Math.cos(t * ff.speed + i) * 0.7;
+      mesh.position.set(x, y, z);
+      const isHovered = s.hover === ff.id;
+      const targetScale = isHovered ? 1.6 : 1.0;
+      mesh.scale.setScalar(mesh.scale.x + (targetScale - mesh.scale.x) * 0.15);
+    });
+  });
+
+  return (
+    <group>
+      {FIREFLY_CONFIGS.map((ff, i) => (
+        <group key={ff.id} ref={el => (meshRefs.current[i] = el)} position={ff.initialPos}>
+          <mesh>
+            <sphereGeometry args={[0.075, 8, 8]} />
+            <meshStandardMaterial color={ff.color} emissive={ff.color} emissiveIntensity={1.2} roughness={0.1} />
+          </mesh>
+          <mesh>
+            <sphereGeometry args={[0.26, 8, 8]} />
+            <meshBasicMaterial color={ff.color} transparent opacity={0.35} depthWrite={false} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+
+function FruitItem({ definition, run, reducedMotion }) {
+  const mesh = useRef();
+  useFrame(({ clock }) => {
+    const s = run.current;
+    if (!mesh.current || !s.objects[definition.id]) return;
+    mesh.current.position.set(...s.objects[definition.id]);
+    const held = s.held?.objectId === definition.id;
+    const hover = s.hover === definition.id;
+    const scale = held || hover ? 1.3 : 1.0;
+    mesh.current.scale.setScalar(mesh.current.scale.x + (scale - mesh.current.scale.x) * 0.2);
+    if (!held && !s.placed.includes(definition.id) && !reducedMotion) {
+      mesh.current.position.y += Math.sin(clock.elapsedTime * 2 + definition.position[0]) * 0.03;
+    }
+  });
+
+  return (
+    <group ref={mesh} position={definition.position}>
+      <mesh>
+        <sphereGeometry args={[0.18, 12, 12]} />
+        <meshStandardMaterial color={definition.color} emissive={definition.color} emissiveIntensity={0.5} roughness={0.2} />
+      </mesh>
+      <mesh position={[0, 0.18, 0]}>
+        <cylinderGeometry args={[0.018, 0.024, 0.09, 4]} />
+        <meshStandardMaterial color="#4a2e12" />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[0.3, 8, 8]} />
+        <meshBasicMaterial color={definition.color} transparent opacity={0.12} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
+function MagicFruitTree({ run, reducedMotion }) {
+  const group = useRef();
+  useFrame(() => {
+    const s = run.current;
+    if (group.current) group.current.visible = s.level === 6;
+  });
+
+  return (
+    <group ref={group}>
+      <group position={BASKET_POSITION}>
+        <mesh position={[0, 0, 0]}>
+          <cylinderGeometry args={[0.65, 0.45, 0.45, 12, 1, true]} />
+          <meshStandardMaterial color="#8b5a2b" roughness={0.8} side={2} />
+        </mesh>
+        <mesh position={[0, -0.2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.45, 12]} />
+          <meshStandardMaterial color="#704214" />
+        </mesh>
+        <mesh position={[0, 0.24, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.55, 0.65, 24]} />
+          <meshBasicMaterial color="#38bdf8" transparent opacity={0.6} depthWrite={false} />
+        </mesh>
+      </group>
+      {FRUIT_DEFINITIONS.map(fruit => (
+        <FruitItem key={fruit.id} definition={fruit} run={run} reducedMotion={reducedMotion} />
+      ))}
+    </group>
+  );
+}
+
+function PlankItem({ definition, run }) {
+  const mesh = useRef();
+  useFrame(() => {
+    const s = run.current;
+    if (!mesh.current || !s.objects[definition.id]) return;
+    mesh.current.position.set(...s.objects[definition.id]);
+    const held = s.held?.objectId === definition.id;
+    const hover = s.hover === definition.id;
+    const scale = held || hover ? 1.12 : 1.0;
+    mesh.current.scale.setScalar(mesh.current.scale.x + (scale - mesh.current.scale.x) * 0.2);
+  });
+
+  return (
+    <group ref={mesh} position={definition.initialPos}>
+      <mesh>
+        <boxGeometry args={[2.5, 0.15, 0.36]} />
+        <meshStandardMaterial color="#c7a16d" roughness={0.7} />
+      </mesh>
+    </group>
+  );
+}
+
+function BridgeRepairPlanks({ run, reducedMotion }) {
+  const group = useRef();
+  useFrame(() => {
+    const s = run.current;
+    if (group.current) group.current.visible = s.level === 7;
+  });
+
+  return (
+    <group ref={group}>
+      {BRIDGE_PLANK_DEFINITIONS.map(plank => (
+        <React.Fragment key={plank.id}>
+          <mesh position={plank.targetPos}>
+            <boxGeometry args={[2.55, 0.17, 0.38]} />
+            <meshBasicMaterial color="#ffe066" wireframe transparent opacity={0.65} />
+          </mesh>
+          <PlankItem definition={plank} run={run} />
+        </React.Fragment>
+      ))}
+    </group>
+  );
+}
+
+function SteppingStoneItem({ stone, index, run }) {
+  const stoneRef = useRef(), runeRef = useRef();
+  useFrame(() => {
+    const s = run.current;
+    if (!runeRef.current) return;
+    const isGlowing = s.activePreviewStone === index || s.lastTouchedStone === index || s.hover === stone.id;
+    runeRef.current.material.opacity = isGlowing ? 0.95 : 0.35;
+    runeRef.current.scale.setScalar(isGlowing ? 1.25 : 1.0);
+  });
+
+  return (
+    <group position={stone.position}>
+      <mesh ref={stoneRef}>
+        <cylinderGeometry args={[0.42, 0.52, 0.22, 10]} />
+        <meshStandardMaterial color="#889684" roughness={0.8} flatShading />
+      </mesh>
+      <mesh ref={runeRef} position={[0, 0.12, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.32, 16]} />
+        <meshBasicMaterial color={stone.color} transparent opacity={0.4} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
+function MemorySteppingStones({ run }) {
+  const group = useRef();
+  useFrame(() => {
+    const s = run.current;
+    if (group.current) group.current.visible = s.level === 8;
+  });
+
+  return (
+    <group ref={group}>
+      {MEMORY_STONE_DEFINITIONS.map((stone, idx) => (
+        <SteppingStoneItem key={stone.id} stone={stone} index={idx} run={run} />
+      ))}
+    </group>
+  );
+}
+
+function AncientMagicGate({ run }) {
+  const group = useRef(), leftDoor = useRef(), rightDoor = useRef(), leftGlyph = useRef(), rightGlyph = useRef();
+  useFrame(() => {
+    const s = run.current;
+    if (group.current) group.current.visible = s.level === 9 || s.adventure?.worldState?.gateOpen;
+    const isOpen = s.adventure?.worldState?.gateOpen || s.gateCharge >= 100;
+    const slide = isOpen ? 1.6 : ((s.gateCharge || 0) / 100) * 1.4;
+    if (leftDoor.current) leftDoor.current.position.x = -0.65 - slide;
+    if (rightDoor.current) rightDoor.current.position.x = 0.65 + slide;
+    if (leftGlyph.current) leftGlyph.current.material.opacity = ((s.gateCharge || 0) / 100) * 0.7 + 0.3;
+    if (rightGlyph.current) rightGlyph.current.material.opacity = ((s.gateCharge || 0) / 100) * 0.7 + 0.3;
+  });
+
+  return (
+    <group ref={group} position={GATE_POSITION}>
+      <mesh position={[-1.7, 0, 0]}><cylinderGeometry args={[0.35, 0.42, 3.6, 8]} /><meshStandardMaterial color="#8e998a" flatShading /></mesh>
+      <mesh position={[1.7, 0, 0]}><cylinderGeometry args={[0.35, 0.42, 3.6, 8]} /><meshStandardMaterial color="#8e998a" flatShading /></mesh>
+      <mesh position={[0, 1.9, 0]}><boxGeometry args={[3.8, 0.45, 0.6]} /><meshStandardMaterial color="#9ba498" flatShading /></mesh>
+      <mesh ref={leftDoor} position={[-0.65, 0, 0]}><boxGeometry args={[1.25, 3.3, 0.2]} /><meshStandardMaterial color="#7a8576" flatShading /></mesh>
+      <mesh ref={rightDoor} position={[0.65, 0, 0]}><boxGeometry args={[1.25, 3.3, 0.2]} /><meshStandardMaterial color="#7a8576" flatShading /></mesh>
+      <mesh ref={leftGlyph} position={[-1.7, 0, 0.35]}>
+        <circleGeometry args={[0.26, 16]} />
+        <meshBasicMaterial color="#38bdf8" transparent opacity={0.4} depthWrite={false} />
+      </mesh>
+      <mesh ref={rightGlyph} position={[1.7, 0, 0.35]}>
+        <circleGeometry args={[0.26, 16]} />
+        <meshBasicMaterial color="#38bdf8" transparent opacity={0.4} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
+function FloralRingItem({ ring, index, run }) {
+  const ringRef = useRef();
+  useFrame(() => {
+    const s = run.current;
+    if (!ringRef.current) return;
+    const isPassed = s.ringsPassed?.includes(ring.id);
+    const isCurrent = s.ringsPassed?.length === index;
+    ringRef.current.material.color.set(isPassed ? '#4ade80' : isCurrent ? '#facc15' : '#e2e8f0');
+    ringRef.current.material.opacity = isPassed ? 0.8 : isCurrent ? 0.75 : 0.3;
+  });
+
+  return (
+    <group position={ring.position}>
+      <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.75, 0.06, 6, 24]} />
+        <meshBasicMaterial color="#facc15" transparent opacity={0.6} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
+function GuidedButterflyScene({ run, reducedMotion }) {
+  const group = useRef(), bMesh = useRef();
+  useFrame(({ clock }) => {
+    const s = run.current;
+    if (group.current) group.current.visible = s.level === 10;
+    if (bMesh.current && s.butterflyPos) {
+      bMesh.current.position.set(...s.butterflyPos);
+      if (!reducedMotion) {
+        bMesh.current.rotation.y = Math.sin(clock.elapsedTime * 8) * 0.2;
+      }
+    }
+  });
+
+  return (
+    <group ref={group}>
+      {BUTTERFLY_RINGS.map((ring, i) => (
+        <FloralRingItem key={ring.id} ring={ring} index={i} run={run} />
+      ))}
+      <group position={BUTTERFLY_FLOWER}>
+        <mesh position={[0, 0.1, 0]}>
+          <cylinderGeometry args={[0.5, 0.6, 0.2, 8]} />
+          <meshStandardMaterial color="#556550" />
+        </mesh>
+        <mesh position={[0, 0.25, 0]}>
+          <icosahedronGeometry args={[0.3, 1]} />
+          <meshStandardMaterial color="#f472b6" emissive="#f43f5e" emissiveIntensity={0.6} />
+        </mesh>
+      </group>
+      <group ref={bMesh} position={BUTTERFLY_START}>
+        <mesh position={[0, 0, 0]} scale={[1, 1, 1.4]}>
+          <sphereGeometry args={[0.07, 8, 8]} />
+          <meshStandardMaterial color="#1e293b" />
+        </mesh>
+        <mesh position={[-0.22, 0.04, 0]} rotation={[0, 0, -0.2]}>
+          <planeGeometry args={[0.42, 0.32]} />
+          <meshStandardMaterial color="#fb923c" emissive="#ea580c" emissiveIntensity={0.5} side={2} />
+        </mesh>
+        <mesh position={[0.22, 0.04, 0]} rotation={[0, 0, 0.2]}>
+          <planeGeometry args={[0.42, 0.32]} />
+          <meshStandardMaterial color="#fb923c" emissive="#ea580c" emissiveIntensity={0.5} side={2} />
+        </mesh>
+        <mesh>
+          <sphereGeometry args={[0.35, 8, 8]} />
+          <meshBasicMaterial color="#fed7aa" transparent opacity={0.25} depthWrite={false} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+function EnergyOrbScene({ run, reducedMotion }) {
+  const group = useRef(), orbCore = useRef(), halo = useRef();
+  useFrame(({ clock }) => {
+    const s = run.current;
+    if (group.current) group.current.visible = s.level === 11;
+    if (orbCore.current) {
+      const charge = (s.orbCharge || 0) / 100;
+      const pulse = 1 + Math.sin(clock.elapsedTime * 6) * 0.1;
+      orbCore.current.scale.setScalar((1 + charge * 0.5) * pulse);
+      if (halo.current) halo.current.material.opacity = 0.2 + charge * 0.5;
+    }
+  });
+
+  return (
+    <group ref={group} position={ENERGY_ORB_POSITION}>
+      <mesh ref={orbCore}>
+        <sphereGeometry args={[0.45, 16, 16]} />
+        <meshStandardMaterial color="#38bdf8" emissive="#0284c7" emissiveIntensity={1.0} roughness={0.1} />
+      </mesh>
+      <mesh ref={halo}>
+        <sphereGeometry args={[0.9, 12, 12]} />
+        <meshBasicMaterial color="#bae6fd" transparent opacity={0.25} depthWrite={false} />
+      </mesh>
+      <mesh rotation={[Math.PI / 4, 0, 0]}>
+        <torusGeometry args={[0.75, 0.03, 6, 32]} />
+        <meshBasicMaterial color="#7dd3fc" transparent opacity={0.5} depthWrite={false} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 4, 0, 0]}>
+        <torusGeometry args={[0.75, 0.03, 6, 32]} />
+        <meshBasicMaterial color="#7dd3fc" transparent opacity={0.5} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
+function StarCrystalAndShrine({ run, reducedMotion }) {
+  const group = useRef(), crystalMesh = useRef();
+  useFrame(({ clock }) => {
+    const s = run.current;
+    if (group.current) group.current.visible = s.level === 12 || s.adventure?.worldState?.treeRestored;
+    if (crystalMesh.current && s.objects?.star_crystal) {
+      crystalMesh.current.position.set(...s.objects.star_crystal);
+      if (!reducedMotion) crystalMesh.current.rotation.y += 0.02;
+    }
+  });
+
+  return (
+    <group ref={group}>
+      <group position={TREE_SHRINE_POS}>
+        <mesh position={[0, 0.2, 0]}>
+          <cylinderGeometry args={[1.1, 1.3, 0.4, 12]} />
+          <meshStandardMaterial color="#94a3b8" flatShading />
+        </mesh>
+        <mesh position={[0, 0.5, 0]}>
+          <cylinderGeometry args={[0.5, 0.65, 0.5, 8]} />
+          <meshStandardMaterial color="#cbd5e1" flatShading />
+        </mesh>
+        <mesh position={[0, 0.77, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.3, 0.45, 16]} />
+          <meshBasicMaterial color="#ffd700" transparent opacity={0.7} depthWrite={false} />
+        </mesh>
+      </group>
+      <group ref={crystalMesh} position={STAR_CRYSTAL_POS}>
+        <mesh>
+          <dodecahedronGeometry args={[0.38, 0]} />
+          <meshStandardMaterial color="#38bdf8" emissive="#0284c7" emissiveIntensity={0.8} roughness={0.1} />
+        </mesh>
+        <mesh>
+          <sphereGeometry args={[0.65, 8, 8]} />
+          <meshBasicMaterial color="#bae6fd" transparent opacity={0.2} depthWrite={false} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+function RestoredForestBloom({ run }) {
+  const group = useRef();
+  const flowers = useMemo(() => {
+    return Array.from({ length: 32 }, (_, i) => {
+      const a = (i / 32) * Math.PI * 2;
+      const r = 2.5 + (i % 5) * 1.2;
+      const colors = ['#f472b6', '#facc15', '#38bdf8', '#c084fc', '#4ade80'];
+      return {
+        pos: [Math.cos(a) * r, 0.15, -1.0 + Math.sin(a) * r * 0.8],
+        color: colors[i % colors.length],
+      };
+    });
+  }, []);
+
+  useFrame(() => {
+    const s = run.current;
+    if (group.current) {
+      group.current.visible = !!s.adventure?.worldState?.plantsBloomed;
+    }
+  });
+
+  return (
+    <group ref={group} visible={false}>
+      {flowers.map((fl, i) => (
+        <group key={i} position={fl.pos}>
+          <mesh position={[0, 0.1, 0]}>
+            <sphereGeometry args={[0.12, 6, 6]} />
+            <meshStandardMaterial color={fl.color} emissive={fl.color} emissiveIntensity={0.6} />
+          </mesh>
+          <mesh position={[0, 0.05, 0]}>
+            <cylinderGeometry args={[0.015, 0.02, 0.2, 4]} />
+            <meshStandardMaterial color="#4ade80" />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+
 export default function ForestScene({ run, readInput, onSnapshot, reducedMotion }) {
   const published = useRef(0);
   const math = useMemo(() => ({ v: new Vector3(), target: new Vector3(), ray: new Raycaster(), pointer: new Vector2(), plane: new Plane(new Vector3(0, 0, 1), 0), hit: new Vector3() }), []);
@@ -450,20 +878,42 @@ export default function ForestScene({ run, readInput, onSnapshot, reducedMotion 
     const s = run.current;
     const project = position => {
       math.v.set(...position).project(camera);
-      return { x: (math.v.x + 1) / 2, y: (1 - math.v.y) / 2, visible: math.v.z > -1 && math.v.z < 1 && Math.abs(math.v.x) < 1 && Math.abs(math.v.y) < 1 };
+      return { x: (math.v.x + 1) / 2, y: (1 - math.v.y) / 2, visible: math.v.z > -1 && math.v.z < 1 && Math.abs(math.v.x) < 1.15 && Math.abs(math.v.y) < 1.15 };
     };
     const input = readInput();
     const projections = {
-      objects: Object.fromEntries(objectDefinitions.map(o => [o.id, project(s.objects[o.id])])),
+      objects: {
+        ...Object.fromEntries(objectDefinitions.map(o => [o.id, project(s.objects[o.id] || o.position)])),
+        star_crystal: project(s.objects?.star_crystal || STAR_CRYSTAL_POS),
+      },
       targets: Object.fromEntries(objectDefinitions.map(o => [o.id, project([o.target[0], o.target[1] + 0.3, o.target[2]])])),
       checkpoints: Object.fromEntries(checkpoints.map(p => [p.id, project(p.position)])),
       landmarks: Object.fromEntries(FOREST_LANDMARKS.map(l => [l.id, project(l.position)])),
+      fireflies: Object.fromEntries(FIREFLY_CONFIGS.map(f => [f.id, project(f.initialPos)])),
+      fruits: Object.fromEntries(FRUIT_DEFINITIONS.map(f => [f.id, project(s.objects?.[f.id] || f.position)])),
+      basket: project(BASKET_POSITION),
+      planks: Object.fromEntries(BRIDGE_PLANK_DEFINITIONS.map(p => [p.id, project(s.objects?.[p.id] || p.initialPos)])),
+      bridgeSlots: Object.fromEntries(BRIDGE_PLANK_DEFINITIONS.map(p => [p.id, project(p.targetPos)])),
+      stones: Object.fromEntries(MEMORY_STONE_DEFINITIONS.map(st => [st.id, project(st.position)])),
+      rings: Object.fromEntries(BUTTERFLY_RINGS.map(r => [r.id, project(r.position)])),
+      butterfly: project(s.butterflyPos || BUTTERFLY_START),
+      treeShrine: project(TREE_SHRINE_POS),
     };
     stepForest(s, { ...input, ...projections, aspect: size.width / size.height,
       dragPoint: (pointer, id) => {
         math.pointer.set(pointer.x * 2 - 1, 1 - pointer.y * 2);
         math.ray.setFromCamera(math.pointer, camera);
-        math.plane.constant = -objectDefinitions.find(o => o.id === id).position[2];
+        let planeZ = 0;
+        if (id === 'crystal' || id === 'leaf') {
+          planeZ = objectDefinitions.find(o => o.id === id)?.position[2] ?? 0;
+        } else if (id?.startsWith('fruit_')) {
+          planeZ = FRUIT_DEFINITIONS.find(f => f.id === id)?.position[2] ?? -0.8;
+        } else if (id?.startsWith('plank_')) {
+          planeZ = BRIDGE_PLANK_DEFINITIONS.find(p => p.id === id)?.initialPos[2] ?? -4.0;
+        } else if (id === 'star_crystal') {
+          planeZ = STAR_CRYSTAL_POS[2];
+        }
+        math.plane.constant = -planeZ;
         if (!math.ray.ray.intersectPlane(math.plane, math.hit)) return null;
         return [Math.max(-10, Math.min(10, math.hit.x)), Math.max(0.5, Math.min(7, math.hit.y)), math.hit.z];
       },
@@ -479,7 +929,7 @@ export default function ForestScene({ run, readInput, onSnapshot, reducedMotion 
   return <>
     <color attach="background" args={['#dcebdd']} /><fog attach="fog" args={['#dcebdd', 20, 48]} />
     <hemisphereLight args={['#fffce7', '#719c68', 2]} /><directionalLight position={[-6, 12, 6]} intensity={2.2} color="#fff0c8" />
-    <Scenery />
+    <Scenery run={run} />
     <Waterfall reducedMotion={reducedMotion} />
     <StoneRuins />
     <ForestShrine />
@@ -487,5 +937,14 @@ export default function ForestScene({ run, readInput, onSnapshot, reducedMotion 
     {checkpoints.map(p => <TrailMarker key={p.id} checkpoint={p} run={run} />)}
     {objectDefinitions.map(o => <React.Fragment key={o.id}><ForestObject definition={o} run={run} reducedMotion={reducedMotion} /><ForestTarget definition={o} run={run} /></React.Fragment>)}
     <Dragonflies run={run} reducedMotion={reducedMotion} />
+    <FireflySwarm run={run} reducedMotion={reducedMotion} />
+    <MagicFruitTree run={run} reducedMotion={reducedMotion} />
+    <BridgeRepairPlanks run={run} reducedMotion={reducedMotion} />
+    <MemorySteppingStones run={run} />
+    <AncientMagicGate run={run} />
+    <GuidedButterflyScene run={run} reducedMotion={reducedMotion} />
+    <EnergyOrbScene run={run} reducedMotion={reducedMotion} />
+    <StarCrystalAndShrine run={run} reducedMotion={reducedMotion} />
+    <RestoredForestBloom run={run} />
   </>;
 }

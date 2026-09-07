@@ -96,7 +96,7 @@ test('completion persistence survives a reload, never regresses and tolerates un
   assert.equal(readForestProgress(storage), 3); saveForestProgress(storage, 1); assert.equal(readForestProgress(storage), 3);
   storage.setItem(FOREST_PROGRESS_KEY, '{broken'); assert.equal(readForestProgress(storage), 0);
   storage.setItem(FOREST_PROGRESS_KEY, '{"completed":99}'); assert.equal(readForestProgress(storage), 0);
-  assert.equal(saveForestProgress(null, 2), false); assert.equal(saveForestProgress(storage, 6), false);
+  assert.equal(saveForestProgress(null, 2), false); assert.equal(saveForestProgress(storage, 12), true); assert.equal(saveForestProgress(storage, 13), false);
 });
 test('restart returns fresh objects, progression, navigation, and gesture state', () => {
   const s = play(3); frame(s, [point()]); frame(s, [point(.4, .5, true)]); pauseForest(s);
@@ -143,4 +143,197 @@ test('discovering all 5 landmarks completes the explorer quest and awards bonus 
   assert.equal(adv.stars, 10);
   assert.equal(adv.novaMood, 'celebrating');
 });
+
+test('level 5 firefly hunt catches 6 fireflies and finishes', () => {
+  const s = play(5);
+  const fireflies = {
+    ff_1: point(0.2, 0.3), ff_2: point(0.3, 0.3), ff_3: point(0.4, 0.3),
+    ff_4: point(0.5, 0.3), ff_5: point(0.6, 0.3), ff_6: point(0.7, 0.3),
+  };
+  assert.equal(s.progress, 0);
+
+  // Hover near ff_1
+  frame(s, [point(0.2, 0.3, false)], { fireflies });
+  assert.equal(s.hover, 'ff_1');
+
+  // Pinch catch ff_1 to ff_6
+  for (let i = 1; i <= 6; i++) {
+    const id = `ff_${i}`;
+    const p = fireflies[id];
+    frame(s, [point(p.x, p.y, false, i)], { fireflies });
+    frame(s, [point(p.x, p.y, true, i)], { fireflies });
+  }
+
+  assert.equal(s.progress, 6);
+  assert.equal(s.firefliesCaught.length, 6);
+  assert.equal(s.status, 'complete');
+});
+
+test('level 6 magic fruit harvest accepts blue fruits and rejects distractors', () => {
+  const s = play(6);
+  const fruits = {
+    fruit_blue_1: point(0.2, 0.4), fruit_red_1: point(0.5, 0.4),
+    fruit_blue_2: point(0.3, 0.4), fruit_blue_3: point(0.4, 0.4),
+  };
+  const basket = point(0.8, 0.8);
+
+  // Grab red fruit (distractor)
+  frame(s, [point(0.5, 0.4, false)], { fruits, basket });
+  frame(s, [point(0.5, 0.4, true)], { fruits, basket });
+  assert.equal(s.held?.objectId, 'fruit_red_1');
+
+  // Release red fruit over basket -> rejected, progress 0
+  frame(s, [point(0.8, 0.8, false)], { fruits, basket });
+  assert.equal(s.held, null);
+  assert.equal(s.progress, 0);
+  assert.equal(s.wrongFruitAttempts, 1);
+
+  // Harvest 3 blue fruits
+  for (let i = 1; i <= 3; i++) {
+    const id = `fruit_blue_${i}`;
+    const p = fruits[id];
+    frame(s, [point(p.x, p.y, false, i)], { fruits, basket });
+    frame(s, [point(p.x, p.y, true, i)], { fruits, basket });
+    frame(s, [point(0.8, 0.8, false, i)], { fruits, basket });
+  }
+
+  assert.equal(s.progress, 3);
+  assert.equal(s.harvestedFruits.length, 3);
+  assert.equal(s.status, 'complete');
+});
+
+test('level 7 repair bridge places 3 planks and repairs world bridge', () => {
+  const s = play(7);
+  const planks = { plank_1: point(0.2, 0.4), plank_2: point(0.4, 0.4), plank_3: point(0.6, 0.4) };
+  const bridgeSlots = { plank_1: point(0.3, 0.7), plank_2: point(0.5, 0.7), plank_3: point(0.7, 0.7) };
+
+  for (let i = 1; i <= 3; i++) {
+    const id = `plank_${i}`;
+    const p = planks[id];
+    const slot = bridgeSlots[id];
+    frame(s, [point(p.x, p.y, false, i)], { planks, bridgeSlots });
+    frame(s, [point(p.x, p.y, true, i)], { planks, bridgeSlots });
+    assert.equal(s.held?.objectId, id);
+    frame(s, [point(slot.x, slot.y, false, i)], { planks, bridgeSlots });
+  }
+
+  assert.equal(s.progress, 3);
+  assert.equal(s.status, 'complete');
+  assert.equal(s.adventure.worldState.bridgeRepaired, true);
+});
+
+test('level 8 river memory stones plays sequences across 3 rounds', () => {
+  const s = play(8);
+  const stones = {
+    stone_0: point(0.2, 0.5), stone_1: point(0.4, 0.5),
+    stone_2: point(0.6, 0.5), stone_3: point(0.8, 0.5),
+  };
+
+  // Round 1 target is [0, 2, 1]
+  // Advance preview phase (3 stones * 700ms = 2100ms)
+  for (let i = 0; i < 45; i++) frame(s, [], { stones }, 50);
+  assert.equal(s.memoryPhase, 'input');
+
+  // Input wrong stone -> resets to preview
+  frame(s, [point(0.8, 0.5, false)], { stones }, 50);
+  frame(s, [point(0.8, 0.5, true)], { stones }, 50);
+  assert.equal(s.memoryPhase, 'preview');
+
+  // Advance preview again
+  for (let i = 0; i < 45; i++) frame(s, [], { stones }, 50);
+  assert.equal(s.memoryPhase, 'input');
+
+  // Input [0, 2, 1]
+  for (const idx of [0, 2, 1]) {
+    const p = stones[`stone_${idx}`];
+    frame(s, [point(p.x, p.y, false, idx + 10)], { stones }, 50);
+    frame(s, [point(p.x, p.y, true, idx + 10)], { stones }, 50);
+  }
+  assert.equal(s.progress, 1);
+  assert.equal(s.memoryRound, 1);
+});
+
+test('level 9 ancient magic gate charges with dual hands and unlocks gate', () => {
+  const s = play(9);
+  assert.equal(s.gateCharge, 0);
+
+  // Single hand does not fully charge
+  for (let i = 0; i < 10; i++) frame(s, [point(0.35, 0.50, false, 1)], {}, 50);
+  assert.equal(s.gateCharge, 0);
+
+  // Both hands in left and right zones
+  for (let i = 0; i < 35; i++) {
+    frame(s, [point(0.35, 0.50, false, 1), point(0.65, 0.50, false, 2)], {}, 50);
+  }
+
+  assert.equal(s.progress, 100);
+  assert.equal(s.status, 'complete');
+  assert.equal(s.adventure.worldState.gateOpen, true);
+});
+
+test('level 10 guide butterfly follows pointer through 5 rings', () => {
+  const s = play(10);
+  const rings = {
+    ring_1: point(0.3, 0.4), ring_2: point(0.4, 0.4), ring_3: point(0.5, 0.4),
+    ring_4: point(0.6, 0.4), ring_5: point(0.7, 0.4),
+  };
+
+  for (let i = 1; i <= 5; i++) {
+    const p = rings[`ring_${i}`];
+    frame(s, [point(p.x, p.y, false, 1)], { rings }, 50);
+  }
+
+  assert.equal(s.progress, 5);
+  assert.equal(s.status, 'complete');
+});
+
+test('level 11 energy orb charges when hands are balanced', () => {
+  const s = play(11);
+  assert.equal(s.orbCharge, 0);
+
+  // Balanced left and right hands
+  for (let i = 0; i < 35; i++) {
+    frame(s, [point(0.35, 0.5, false, 1), point(0.65, 0.5, false, 2)], {}, 50);
+  }
+
+  assert.equal(s.progress, 100);
+  assert.equal(s.status, 'complete');
+  assert.equal(s.adventure.worldState.shrineActive, true);
+});
+
+test('level 12 restores the magic tree through multi-step quest', () => {
+  const s = play(12);
+  const starCrystal = point(0.2, 0.3);
+  const treeShrine = point(0.8, 0.8);
+
+  // Stage 0: Look towards Magic Tree
+  for (let i = 0; i < 15; i++) frame(s, [], { keyboard: { x: 0, y: 1 } }, 50);
+  assert.equal(s.stage, 1);
+
+  // Stage 1: Spot crystal
+  frame(s, [point(0.2, 0.3, false)], { objects: { star_crystal: starCrystal }, treeShrine });
+  assert.equal(s.stage, 2);
+
+  // Stage 2: Pinch to grab
+  frame(s, [point(0.2, 0.3, false)], { objects: { star_crystal: starCrystal }, treeShrine });
+  frame(s, [point(0.2, 0.3, true)], { objects: { star_crystal: starCrystal }, treeShrine });
+  assert.equal(s.stage, 3);
+  assert.equal(s.held?.objectId, 'star_crystal');
+
+  // Stage 3 & 4: Carry and release over tree shrine
+  frame(s, [point(0.8, 0.8, true)], { objects: { star_crystal: starCrystal }, treeShrine });
+  assert.equal(s.stage, 4);
+  frame(s, [point(0.8, 0.8, false)], { objects: { star_crystal: starCrystal }, treeShrine });
+  assert.equal(s.stage, 5);
+
+  // Stage 5: Dual hand channeling to 100%
+  for (let i = 0; i < 45; i++) {
+    frame(s, [point(0.3, 0.4, false, 1), point(0.7, 0.4, false, 2)], { treeShrine }, 50);
+  }
+
+  assert.equal(s.status, 'complete');
+  assert.equal(s.adventure.worldState.treeRestored, true);
+  assert.equal(s.adventure.worldState.plantsBloomed, true);
+});
+
 

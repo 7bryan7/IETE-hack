@@ -8,7 +8,7 @@ import ForestHUD from './ForestHUD';
 import { createForestRun, pauseForest } from './forestLogic.js';
 import { forestLevels } from './forestLevels.js';
 import { readForestHands } from './worldControls.js';
-import { readForestProgress, saveForestProgress } from './progress.js';
+import { readForestProgress, saveForestProgress, readForestWorldState, saveForestWorldState } from './progress.js';
 
 function ForestCamera({ source, onStatus }) {
   const videoRef = useRef(null);
@@ -34,7 +34,11 @@ class SceneBoundary extends Component {
 }
 
 export default function ForestWorld({ onExit }) {
-  const run = useRef(createForestRun()), stage = useRef(), dialog = useRef(), cameraSource = useRef(() => []);
+  const run = useRef(null);
+  if (!run.current) {
+    run.current = createForestRun(1, readForestWorldState(window.localStorage));
+  }
+  const stage = useRef(), dialog = useRef(), cameraSource = useRef(() => []);
   const mouse = useRef({ id: 'mouse', x: 0.5, y: 0.5, pinch: false, visible: false });
   const keys = useRef(new Set()), flags = useRef({ mode: 'mouse', paused: false });
   const [snapshot, setSnapshot] = useState(() => ({ ...run.current }));
@@ -43,6 +47,14 @@ export default function ForestWorld({ onExit }) {
   const [saved, setSaved] = useState(true), [cameraKey, setCameraKey] = useState(0);
   const [contextLost, setContextLost] = useState(false);
   const [previous] = useState(() => { try { return readForestProgress(window.localStorage); } catch { return 0; } });
+  const [unlockedLevel, setUnlockedLevel] = useState(() => {
+    try {
+      const p = readForestProgress(window.localStorage);
+      return Math.min(12, Math.max(1, p + 1));
+    } catch {
+      return 1;
+    }
+  });
   const [reducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const recorded = useRef('');
   flags.current = { mode, paused: paused || contextLost };
@@ -58,7 +70,15 @@ export default function ForestWorld({ onExit }) {
   useEffect(() => {
     if (snapshot.status === 'complete' && recorded.current !== String(snapshot.level)) {
       recorded.current = String(snapshot.level);
-      try { setSaved(saveForestProgress(window.localStorage, snapshot.level)); } catch { setSaved(false); }
+      try {
+        setSaved(saveForestProgress(window.localStorage, snapshot.level));
+        setUnlockedLevel(prev => Math.min(12, Math.max(prev, snapshot.level + 1)));
+        if (run.current.adventure?.worldState) {
+          saveForestWorldState(window.localStorage, run.current.adventure.worldState);
+        }
+      } catch {
+        setSaved(false);
+      }
     }
   }, [snapshot.status, snapshot.level]);
   useEffect(() => {
@@ -72,8 +92,13 @@ export default function ForestWorld({ onExit }) {
     };
   }, []);
   const reset = (level = run.current.level, start = false) => {
-    clearInput(); run.current = createForestRun(level); run.current.status = start ? 'playing' : 'intro';
-    recorded.current = ''; setPaused(false); setSnapshot({ ...run.current });
+    clearInput();
+    const worldState = readForestWorldState(window.localStorage);
+    run.current = createForestRun(level, worldState);
+    run.current.status = start ? 'playing' : 'intro';
+    recorded.current = '';
+    setPaused(false);
+    setSnapshot({ ...run.current });
     if (start) requestAnimationFrame(() => stage.current?.focus());
   };
   const chooseMode = next => { clearInput(); setMode(next); setChosen(true); setPaused(false); };
@@ -100,7 +125,7 @@ export default function ForestWorld({ onExit }) {
       gl.domElement.addEventListener('webglcontextlost', () => { clearInput(); setContextLost(true); });
       gl.domElement.addEventListener('webglcontextrestored', () => { setContextLost(false); setPaused(true); });
     }}><ForestScene run={run} readInput={readInput} onSnapshot={setSnapshot} reducedMotion={reducedMotion} /></Canvas></SceneBoundary>
-    <ForestHUD snapshot={snapshot} mode={mode} paused={paused} onExit={onExit} onRestart={() => reset()} onMode={() => chooseMode(mode === 'camera' ? 'mouse' : 'camera')} onPause={() => { clearInput(); setPaused(p => !p); stage.current.focus(); }} trackingStatus={trackingStatus} />
+    <ForestHUD snapshot={snapshot} mode={mode} paused={paused} onExit={onExit} onRestart={() => reset()} onMode={() => chooseMode(mode === 'camera' ? 'mouse' : 'camera')} onPause={() => { clearInput(); setPaused(p => !p); stage.current.focus(); }} onSelectLevel={lvl => reset(lvl, true)} unlockedLevel={unlockedLevel} trackingStatus={trackingStatus} />
     {mode === 'camera' && <ForestCamera key={cameraKey} source={cameraSource} onStatus={setTrackingStatus} />}
     {mode === 'camera' && trackingStatus && <div className="forest-tracking-help forest-glass"><p>{trackingStatus}</p><button className="forest-button subtle" onClick={() => setCameraKey(k => k + 1)}>Retry tracking</button><button className="forest-button subtle" onClick={() => chooseMode('mouse')}>Use mouse</button></div>}
     {contextLost && <div className="forest-render-error" role="alert"><h2>Let’s reopen the forest</h2><p>The graphics connection was interrupted. Your completed levels are saved.</p><button className="forest-button" onClick={onExit}>Back to worlds</button></div>}
@@ -112,17 +137,17 @@ export default function ForestWorld({ onExit }) {
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
     }}>
       <div className={`forest-dialog-icon ${finished ? 'celebrate' : ''}`}>{finished ? <Sparkles size={34} /> : <Trees size={36} />}</div>
-      <span className="forest-eyebrow">{finished ? snapshot.level === 4 ? 'ALL FOUR LEVELS COMPLETE' : `LEVEL ${snapshot.level} COMPLETE` : paused && !intro ? 'A MOMENT TO REST' : `WELCOME, EXPLORER · LEVEL ${snapshot.level}`}</span>
-      <h2 id="forest-dialog-title">{finished ? snapshot.level === 4 ? 'Forest completed!' : snapshot.feedback : paused && !intro ? 'Your forest is waiting' : snapshot.level === 1 ? 'A little wonder.\nA new adventure.' : forestLevels[snapshot.level - 1].title}</h2>
-      <p>{finished ? snapshot.level === 4 ? 'You explored the woods, discovered its treasures, and brought the magical leaf home. Great job!' : 'Great job! Your next woodland adventure is ready.' : paused && !intro ? 'Take your time. Continue whenever you’re ready.' : forestLevels[snapshot.level - 1].detail}</p>
+      <span className="forest-eyebrow">{finished ? snapshot.level === 12 ? 'ALL TWELVE LEVELS COMPLETE' : `LEVEL ${snapshot.level} COMPLETE` : paused && !intro ? 'A MOMENT TO REST' : `WELCOME, EXPLORER · LEVEL ${snapshot.level}`}</span>
+      <h2 id="forest-dialog-title">{finished ? snapshot.level === 12 ? 'Forest Restored! 🌳✨' : snapshot.feedback : paused && !intro ? 'Your forest is waiting' : snapshot.level === 1 ? 'A little wonder.\nA new adventure.' : forestLevels[snapshot.level - 1]?.title}</h2>
+      <p>{finished ? snapshot.level === 12 ? 'You guided butterflies, repaired the bridge, channeled ancient gates, and revived the Grand Magic Tree. The entire Whispering Woods blooms with ancient life!' : 'Great job! Your next woodland adventure is ready.' : paused && !intro ? 'Take your time. Continue whenever you’re ready.' : forestLevels[snapshot.level - 1]?.detail}</p>
       {intro && <>
         <div className="forest-control-choices"><button className={`forest-control-choice ${chosen && mode === 'camera' ? 'selected' : ''}`} onClick={() => chooseMode('camera')}><Hand size={23} /><strong>Play with hands</strong><small>Webcam + pinch gestures</small></button><button className={`forest-control-choice ${chosen && mode === 'mouse' ? 'selected' : ''}`} onClick={() => chooseMode('mouse')}><MousePointer2 size={23} /><strong>Mouse & keyboard</strong><small>Arrow keys + click and drag</small></button></div>
         {chosen && <p className="forest-small">{mode === 'camera' ? 'Raise two open hands. Move together to look around; lower one hand to grab. Camera frames stay in your browser.' : 'Click the forest, then use the arrow keys. Point at a treasure, hold the mouse button to carry it, and release at its target.'}</p>}
         <button className="forest-button primary" disabled={!chosen} onClick={start}>Start level {snapshot.level}<ArrowRight size={18} /></button>
-        {snapshot.level === 1 && previous > 0 && previous < 4 && <button className="forest-button subtle" onClick={() => reset(previous + 1)}>Continue at level {previous + 1}</button>}
+        {snapshot.level === 1 && previous > 0 && previous < 12 && <button className="forest-button subtle" onClick={() => reset(previous + 1)}>Continue at level {previous + 1}</button>}
         <button className="forest-button subtle" onClick={onExit}>Back to worlds</button>
       </>}
-      {finished && <><div className="forest-result-strip"><span><Check size={16} />{snapshot.level === 4 ? '4 levels explored' : 'Mission complete'}</span><span>{Math.round(snapshot.elapsed / 1000)}s this level</span></div>{!saved && <p role="status">Progress could not be saved. You can keep playing this visit.</p>}<button className="forest-button primary" onClick={() => reset(snapshot.level === 4 ? 1 : snapshot.level + 1)}>{snapshot.level === 4 ? 'Explore again' : 'Next level'}<ArrowRight size={18} /></button><button className="forest-button subtle" onClick={onExit}>Back to worlds</button></>}
+      {finished && <><div className="forest-result-strip"><span><Check size={16} />{snapshot.level === 12 ? '12 levels explored' : 'Mission complete'}</span><span>{Math.round(snapshot.elapsed / 1000)}s this level</span></div>{!saved && <p role="status">Progress could not be saved. You can keep playing this visit.</p>}<button className="forest-button primary" onClick={() => reset(snapshot.level === 12 ? 1 : snapshot.level + 1)}>{snapshot.level === 12 ? 'Explore again' : 'Next level'}<ArrowRight size={18} /></button><button className="forest-button subtle" onClick={onExit}>Back to worlds</button></>}
       {paused && !intro && !finished && <><button className="forest-button primary" onClick={() => { setPaused(false); stage.current.focus(); }}>Continue exploring<ArrowRight size={18} /></button><button className="forest-button subtle" onClick={onExit}>Back to worlds</button></>}
     </section></div>}
   </main>;

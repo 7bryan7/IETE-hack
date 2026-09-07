@@ -57,7 +57,22 @@ export const ADVENTURE_QUESTS = [
   },
 ];
 
-export function createAdventureState() {
+export const NOVA_LEVEL_MESSAGES = {
+  1: 'Welcome to the Whispering Woods! I am Nova, your forest guide. Raise both hands to look around!',
+  2: 'Look near the rocks on the left. Can you spot the glowing blue crystal?',
+  3: 'Point at the crystal, pinch to hold it, and place it gently into the golden circle!',
+  4: 'Our first grand quest! Explore the trail, find the magical leaf, and bring it to the woodland shrine.',
+  5: 'The fireflies need our help! Move your hand near a firefly, then pinch when it glows!',
+  6: 'The magical orchard is ripe! We need 3 blue fruits in the basket. Let’s harvest them!',
+  7: 'The bridge is broken! Carry the wooden planks and snap them into the river crossing.',
+  8: 'Magical stepping stones! Watch the pattern glow in the river, then repeat the melody.',
+  9: 'Both hands can open this ancient gate! Place your hands into both runes together.',
+  10: 'A friendly butterfly! It will follow your fingertip through the floating floral rings.',
+  11: 'Balance both hands around the floating orb to charge its celestial power!',
+  12: 'We’re almost there! Awaken the Grand Magic Tree and restore the Whispering Woods!',
+};
+
+export function createAdventureState(initialLevel = 1, initialWorldState = null) {
   return {
     discovered: [],
     discoveryDwell: {},
@@ -67,16 +82,18 @@ export function createAdventureState() {
     newlyDiscovered: null,
     discoveryTimer: 0,
     novaMood: 'cheerful', // 'cheerful' | 'excited' | 'thinking' | 'celebrating'
-    novaMessage: 'Welcome to the Whispering Woods! I am Nova, your forest guide. Raise both hands to look around!',
+    novaMessage: NOVA_LEVEL_MESSAGES[initialLevel] || NOVA_LEVEL_MESSAGES[1],
     treeEnergy: 0, // 0 - 100%
-    worldState: {
+    worldState: initialWorldState || {
       bridgeRepaired: false,
       gateOpen: false,
+      shrineActive: false,
       plantsBloomed: false,
       treeRestored: false,
     },
   };
 }
+
 
 export function updateAdventure(state, input, deltaMs) {
   if (!state) return;
