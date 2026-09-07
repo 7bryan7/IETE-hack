@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createForestRun, stepForest, pauseForest, near } from './forestLogic.js';
 import { readForestHands, updateNavigation } from './worldControls.js';
 import { readForestProgress, saveForestProgress, FOREST_PROGRESS_KEY } from './progress.js';
+import { createAdventureState, updateAdventure, getClosestUndiscovered, FOREST_LANDMARKS } from './forestAdventure.js';
 const point = (x = 0.4, y = 0.5, pinch = false, id = 1) => ({ x, y, pinch, id });
 const play = level => Object.assign(createForestRun(level), { status: 'playing' });
 const frame = (s, pointers, extra = {}, ms = 50) => stepForest(s, { pointers, aspect: 1.6, objects: { crystal: point(), leaf: point() }, targets: { crystal: point(0.7), leaf: point(0.7) }, dragPoint: () => [2, 2, 0], ...extra }, ms);
@@ -101,3 +102,45 @@ test('restart returns fresh objects, progression, navigation, and gesture state'
   const s = play(3); frame(s, [point()]); frame(s, [point(.4, .5, true)]); pauseForest(s);
   const restarted = createForestRun(3); assert.equal(restarted.status, 'intro'); assert.equal(restarted.held, null); assert.deepEqual(restarted.armed, {}); assert.equal(restarted.control.yaw, 0);
 });
+
+test('adventure state initializes with 5 undiscovered landmarks, zero stars, and Nova greeting', () => {
+  const adv = createAdventureState();
+  assert.equal(adv.discovered.length, 0);
+  assert.equal(adv.stars, 0);
+  assert.ok(adv.novaMessage.includes('Nova'));
+  assert.equal(FOREST_LANDMARKS.length, 5);
+});
+
+test('looking towards a landmark for 400ms discovers it, awards a star, and updates Nova dialogue', () => {
+  const s = play(1);
+  const landmarks = { crystal_grove: { x: 0.5, y: 0.5, visible: true } };
+  for (let i = 0; i < 4; i++) frame(s, [point()], { projections: { landmarks } }, 50);
+  assert.equal(s.adventure.discovered.length, 0);
+  for (let i = 0; i < 6; i++) frame(s, [point()], { projections: { landmarks } }, 50);
+  assert.equal(s.adventure.discovered.length, 1);
+  assert.equal(s.adventure.discovered[0], 'crystal_grove');
+  assert.equal(s.adventure.stars, 1);
+  assert.equal(s.stars, 1);
+  assert.ok(s.adventure.novaMessage.includes('Crystal Grove'));
+});
+
+test('getClosestUndiscovered points to nearest undiscovered landmark with direction', () => {
+  const adv = createAdventureState();
+  const closest = getClosestUndiscovered(adv, 0);
+  assert.ok(closest);
+  assert.ok(['left', 'right', 'forward'].includes(closest.direction));
+  assert.ok(closest.distance > 0);
+});
+
+test('discovering all 5 landmarks completes the explorer quest and awards bonus stars', () => {
+  const adv = createAdventureState();
+  for (const landmark of FOREST_LANDMARKS) {
+    const projections = { landmarks: { [landmark.id]: { x: 0.5, y: 0.5, visible: true } } };
+    for (let i = 0; i < 10; i++) updateAdventure(adv, { projections }, 50);
+  }
+  assert.equal(adv.discovered.length, 5);
+  // 5 individual stars + 5 quest completion bonus stars = 10 stars
+  assert.equal(adv.stars, 10);
+  assert.equal(adv.novaMood, 'celebrating');
+});
+

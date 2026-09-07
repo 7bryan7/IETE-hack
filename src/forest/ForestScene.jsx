@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Plane, Raycaster, Vector2, Vector3 } from 'three';
-import { checkpoints, objectDefinitions } from './forestLevels.js';
+import { checkpoints, objectDefinitions, FOREST_LANDMARKS } from './forestLevels.js';
 import { stepForest } from './forestLogic.js';
 
 function Tree({ position, size = 1, broad = false, color = '#508b61' }) {
@@ -43,6 +43,206 @@ const Scenery = memo(function Scenery() {
     {[-18, 0, 18].map((x, i) => <mesh key={x} position={[x, 1, -27]} scale={[12, 5 + i, 8]}><icosahedronGeometry args={[1, 1]} /><meshStandardMaterial color="#aac7a0" flatShading /></mesh>)}
   </group>;
 });
+
+function Waterfall({ reducedMotion }) {
+  const cascade = useRef();
+  useFrame(({ clock }) => {
+    if (!reducedMotion && cascade.current) {
+      cascade.current.position.y = 1.2 + Math.sin(clock.elapsedTime * 6) * 0.05;
+    }
+  });
+  return (
+    <group position={[-2.8, 0, -6.8]}>
+      <mesh position={[0, 1.4, -0.4]} scale={[2.8, 2.2, 1.6]} rotation={[0, 0.2, 0]}>
+        <dodecahedronGeometry args={[1.2, 0]} />
+        <meshStandardMaterial color="#7a8a76" flatShading />
+      </mesh>
+      <mesh position={[1.4, 0.9, -0.2]} scale={[1.6, 1.6, 1.2]}>
+        <dodecahedronGeometry args={[0.9, 0]} />
+        <meshStandardMaterial color="#6a7a67" flatShading />
+      </mesh>
+      <mesh ref={cascade} position={[0, 1.2, 0.35]} rotation={[0.2, 0, 0]}>
+        <planeGeometry args={[1.6, 2.4]} />
+        <meshStandardMaterial color="#91e5ee" transparent opacity={0.78} roughness={0.1} metalness={0.2} />
+      </mesh>
+      <mesh position={[0, 0.08, 0.7]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[1.1, 16]} />
+        <meshBasicMaterial color="#d4f9ff" transparent opacity={0.65} />
+      </mesh>
+      {[0, 1, 2].map(i => (
+        <mesh key={i} position={[(i - 1) * 0.45, 0.35 + (i % 2) * 0.2, 0.8]}>
+          <sphereGeometry args={[0.08, 6, 6]} />
+          <meshBasicMaterial color="#eefdff" transparent opacity={0.4} depthWrite={false} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function StoneRuins() {
+  return (
+    <group position={[7.0, 0, -4.5]}>
+      <mesh position={[-1.2, 1.4, 0]} rotation={[0.05, 0.1, -0.04]}>
+        <cylinderGeometry args={[0.32, 0.38, 2.8, 8]} />
+        <meshStandardMaterial color="#a3aba0" flatShading />
+      </mesh>
+      <mesh position={[1.2, 1.5, 0.2]} rotation={[-0.03, -0.08, 0.05]}>
+        <cylinderGeometry args={[0.3, 0.36, 3.0, 8]} />
+        <meshStandardMaterial color="#9ba498" flatShading />
+      </mesh>
+      <mesh position={[0.2, 0.35, 1.1]} rotation={[0, 0.4, Math.PI / 2]}>
+        <cylinderGeometry args={[0.28, 0.32, 1.6, 8]} />
+        <meshStandardMaterial color="#8e998a" flatShading />
+      </mesh>
+      <mesh position={[0, 2.85, 0.1]} rotation={[0.02, 0.05, 0.02]}>
+        <boxGeometry args={[3.2, 0.35, 0.6]} />
+        <meshStandardMaterial color="#aab4a7" flatShading />
+      </mesh>
+      <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0.2]}>
+        <circleGeometry args={[2.0, 6]} />
+        <meshStandardMaterial color="#889684" roughness={0.9} />
+      </mesh>
+      <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.8, 0.95, 16]} />
+        <meshBasicMaterial color="#94f4c8" transparent opacity={0.6} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
+function ForestShrine() {
+  return (
+    <group position={[-5.5, 0, -9.0]}>
+      <mesh position={[0, 0.15, 0]}>
+        <cylinderGeometry args={[2.2, 2.5, 0.3, 16]} />
+        <meshStandardMaterial color="#9ba693" flatShading />
+      </mesh>
+      <mesh position={[0, 0.65, 0]}>
+        <cylinderGeometry args={[0.55, 0.7, 0.8, 8]} />
+        <meshStandardMaterial color="#8a9982" flatShading />
+      </mesh>
+      <mesh position={[0, 1.25, 0]}>
+        <octahedronGeometry args={[0.28, 0]} />
+        <meshStandardMaterial color="#ffe891" emissive="#ffd659" emissiveIntensity={0.8} />
+      </mesh>
+      <mesh position={[0, 1.25, 0]}>
+        <sphereGeometry args={[0.55, 12, 8]} />
+        <meshBasicMaterial color="#ffe891" transparent opacity={0.16} depthWrite={false} />
+      </mesh>
+      {[0, 1, 2, 3].map(i => {
+        const a = (i / 4) * Math.PI * 2;
+        return (
+          <mesh key={i} position={[Math.cos(a) * 1.7, 0.55, Math.sin(a) * 1.7]}>
+            <boxGeometry args={[0.3, 0.9, 0.25]} />
+            <meshStandardMaterial color="#a0ac99" flatShading />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+}
+
+function GrandMagicTree({ run, reducedMotion }) {
+  const foliage = useRef();
+  useFrame(({ clock }) => {
+    if (!reducedMotion && foliage.current) {
+      foliage.current.rotation.y = Math.sin(clock.elapsedTime * 0.12) * 0.05;
+    }
+  });
+  return (
+    <group position={[0, 0, -16.0]}>
+      <mesh position={[0, 3.2, 0]}>
+        <cylinderGeometry args={[0.9, 1.8, 6.5, 8]} />
+        <meshStandardMaterial color="#73573c" flatShading />
+      </mesh>
+      {[0, 1, 2, 3, 4].map(i => {
+        const a = (i / 5) * Math.PI * 2;
+        return (
+          <mesh key={i} position={[Math.cos(a) * 1.5, 0.8, Math.sin(a) * 1.5]} rotation={[0.4, a, 0]}>
+            <cylinderGeometry args={[0.25, 0.55, 2.4, 5]} />
+            <meshStandardMaterial color="#6a5036" flatShading />
+          </mesh>
+        );
+      })}
+      <group ref={foliage} position={[0, 6.2, 0]}>
+        <mesh position={[0, 0, 0]} scale={[4.2, 2.5, 3.8]}>
+          <icosahedronGeometry args={[1.5, 1]} />
+          <meshStandardMaterial color="#509b64" flatShading />
+        </mesh>
+        <mesh position={[0, 1.8, 0]} scale={[3.4, 2.2, 3.2]}>
+          <icosahedronGeometry args={[1.4, 1]} />
+          <meshStandardMaterial color="#6ec27b" flatShading />
+        </mesh>
+        <mesh position={[0, 3.2, 0]} scale={[2.4, 1.8, 2.4]}>
+          <icosahedronGeometry args={[1.2, 1]} />
+          <meshStandardMaterial color="#94e892" flatShading />
+        </mesh>
+      </group>
+      <mesh position={[0, 6.0, 0]}>
+        <sphereGeometry args={[4.5, 16, 12]} />
+        <meshBasicMaterial color="#aaffcc" transparent opacity={0.06} depthWrite={false} />
+      </mesh>
+      {[0, 1, 2, 3, 4].map(i => (
+        <mesh key={i} position={[Math.sin(i * 1.5) * 3.2, 4.5 + (i % 3) * 1.2, Math.cos(i * 1.5) * 3.2]}>
+          <octahedronGeometry args={[0.12, 0]} />
+          <meshBasicMaterial color="#fffeb3" />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function NovaSpirit({ run, reducedMotion }) {
+  const group = useRef(), wingL = useRef(), wingR = useRef();
+  useFrame(({ clock, camera }) => {
+    if (!group.current) return;
+    const t = clock.elapsedTime;
+    const yaw = run.current.control?.yaw || 0;
+    const tilt = run.current.control?.tilt || 0;
+    const bob = reducedMotion ? 0 : Math.sin(t * 3.2) * 0.12;
+
+    const dist = 7.5;
+    const offsetX = Math.sin(yaw + 0.32) * dist;
+    const offsetZ = 12 - Math.cos(yaw + 0.32) * dist;
+    const offsetY = 4.2 + tilt * 0.35 + bob;
+
+    group.current.position.set(offsetX, offsetY, offsetZ);
+    group.current.lookAt(camera.position);
+
+    if (!reducedMotion && wingL.current && wingR.current) {
+      const flap = Math.sin(t * 14) * 0.45;
+      wingL.current.rotation.y = flap;
+      wingR.current.rotation.y = -flap;
+    }
+  });
+
+  return (
+    <group ref={group}>
+      <mesh>
+        <sphereGeometry args={[0.22, 16, 16]} />
+        <meshStandardMaterial color="#fff3b0" emissive="#ffd752" emissiveIntensity={0.9} roughness={0.1} />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[0.42, 12, 8]} />
+        <meshBasicMaterial color="#ffe87d" transparent opacity={0.24} depthWrite={false} />
+      </mesh>
+      <mesh ref={wingL} position={[-0.18, 0.08, 0]} rotation={[0, 0, 0.35]}>
+        <planeGeometry args={[0.28, 0.18]} />
+        <meshBasicMaterial color="#fff9d6" transparent opacity={0.7} side={2} depthWrite={false} />
+      </mesh>
+      <mesh ref={wingR} position={[0.18, 0.08, 0]} rotation={[0, 0, -0.35]}>
+        <planeGeometry args={[0.28, 0.18]} />
+        <meshBasicMaterial color="#fff9d6" transparent opacity={0.7} side={2} depthWrite={false} />
+      </mesh>
+      {[0, 1].map(i => (
+        <mesh key={i} position={[Math.cos(i * 3.14) * 0.32, -0.18 - i * 0.1, 0]}>
+          <octahedronGeometry args={[0.045, 0]} />
+          <meshBasicMaterial color="#ffffff" />
+        </mesh>
+      ))}
+    </group>
+  );
+}
 
 export function ForestObject({ definition, run, reducedMotion }) {
   const mesh = useRef(), halo = useRef();
@@ -112,6 +312,7 @@ export default function ForestScene({ run, readInput, onSnapshot, reducedMotion 
       objects: Object.fromEntries(objectDefinitions.map(o => [o.id, project(s.objects[o.id])])),
       targets: Object.fromEntries(objectDefinitions.map(o => [o.id, project([o.target[0], o.target[1] + 0.3, o.target[2]])])),
       checkpoints: Object.fromEntries(checkpoints.map(p => [p.id, project(p.position)])),
+      landmarks: Object.fromEntries(FOREST_LANDMARKS.map(l => [l.id, project(l.position)])),
     };
     stepForest(s, { ...input, ...projections, aspect: size.width / size.height,
       dragPoint: (pointer, id) => {
@@ -134,6 +335,11 @@ export default function ForestScene({ run, readInput, onSnapshot, reducedMotion 
     <color attach="background" args={['#dcebdd']} /><fog attach="fog" args={['#dcebdd', 20, 48]} />
     <hemisphereLight args={['#fffce7', '#719c68', 2]} /><directionalLight position={[-6, 12, 6]} intensity={2.2} color="#fff0c8" />
     <Scenery />
+    <Waterfall reducedMotion={reducedMotion} />
+    <StoneRuins />
+    <ForestShrine />
+    <GrandMagicTree run={run} reducedMotion={reducedMotion} />
+    <NovaSpirit run={run} reducedMotion={reducedMotion} />
     {checkpoints.map(p => <TrailMarker key={p.id} checkpoint={p} run={run} />)}
     {objectDefinitions.map(o => <React.Fragment key={o.id}><ForestObject definition={o} run={run} reducedMotion={reducedMotion} /><ForestTarget definition={o} run={run} /></React.Fragment>)}
     <Fireflies reducedMotion={reducedMotion} />

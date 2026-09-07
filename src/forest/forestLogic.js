@@ -1,5 +1,6 @@
 import { forestLevels, objectDefinitions } from './forestLevels.js';
 import { updateNavigation, clamp } from './worldControls.js';
+import { createAdventureState, updateAdventure } from './forestAdventure.js';
 
 export function createForestRun(level = 1) {
   return { level, status: 'intro', elapsed: 0, progress: 0, stage: 0, navigationMs: 0,
@@ -7,6 +8,7 @@ export function createForestRun(level = 1) {
     viewed: [], dwell: {}, left: 0, right: 0, hover: null, held: null, lostMs: 0,
     armed: {}, objects: Object.fromEntries(objectDefinitions.map(o => [o.id, [...o.position]])),
     placed: [], attempts: 0, feedback: '', feedbackUntil: 0, pointers: [],
+    adventure: createAdventureState(), stars: 0,
   };
 }
 export const near = (a, b, radius, aspect = 1) => !!a && !!b && b.visible !== false && Math.hypot((a.x - b.x) * aspect, a.y - b.y) < radius;
@@ -84,4 +86,11 @@ export function stepForest(s, input, deltaMs) {
     }
   }
   for (const p of pointers) s.armed[p.id] = !p.pinch;
+  if (s.adventure) {
+    updateAdventure(s.adventure, input, ms);
+    s.stars = s.adventure.stars;
+    if (s.adventure.newlyDiscovered && !s.feedback) {
+      feedback(s, `Discovered: ${s.adventure.newlyDiscovered.name}! ✨`);
+    }
+  }
 }

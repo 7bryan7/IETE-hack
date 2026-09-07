@@ -14,3 +14,6 @@ export const objectDefinitions = [
   { id: 'crystal', position: [-4, 1.5, 0], target: [2.6, 0.25, 0], color: '#94f8ff' },
   { id: 'leaf', position: [4.5, 1.5, -3], target: [-1.6, 0.25, -3], color: '#dcfa80' },
 ];
+
+export { FOREST_LANDMARKS, ADVENTURE_QUESTS } from './forestAdventure.js';
+
