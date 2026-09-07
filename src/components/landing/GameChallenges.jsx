@@ -5,7 +5,6 @@ export default function GameChallenges({ onStartGame }) {
     {
       id: 'worlds',
       badge: 'Featured • 3D Exploration',
-      emoji: '🌲',
       title: 'Forest Open World',
       desc: 'Explore the 3D Whispering Woods with two-hand navigation! Discover ancient ruins, catch reactive dragonflies, and uncover magical landmarks.',
       tags: ['Two-Hand Navigation', '3D Adventure', 'Dragonflies', 'Quests'],
@@ -15,7 +14,6 @@ export default function GameChallenges({ onStartGame }) {
     {
       id: 'game_reach',
       badge: 'Challenge 01 • Speed & Accuracy',
-      emoji: '🎯',
       title: 'Target Reach Challenge',
       desc: 'Touch circular targets as fast as you can using your index fingertip! Measures movement path accuracy and reaction response times.',
       tags: ['Index Fingertip', 'Visual Reaction', 'Path Deviation'],
@@ -25,7 +23,6 @@ export default function GameChallenges({ onStartGame }) {
     {
       id: 'game_catch',
       badge: 'Challenge 02 • Pinch Gestures',
-      emoji: '🖐️',
       title: 'Star & Bubble Catch',
       desc: 'Bring your thumb and index finger together to catch falling stars and floating bubbles! Includes smart hysteresis to prevent accidental drops.',
       tags: ['Pinch Detection', 'Grip Hysteresis', 'Timing Practice'],
@@ -35,7 +32,6 @@ export default function GameChallenges({ onStartGame }) {
     {
       id: 'game_transfer',
       badge: 'Challenge 03 • Bimanual Coordination',
-      emoji: '🔄',
       title: 'Two-Hand Object Transfer',
       desc: 'Pick up an object with your left hand, lift it, and smoothly pass it over to your right hand in mid-air. Exercises bilateral brain & motor sync.',
       tags: ['Two-Hand Sync', 'Mid-Air Transfer', 'Bilateral Therapy'],
@@ -45,7 +41,6 @@ export default function GameChallenges({ onStartGame }) {
     {
       id: 'game_sequence',
       badge: 'Challenge 04 • Spatial Motor Planning',
-      emoji: '🧩',
       title: 'Motor Sequence Challenge',
       desc: 'Remember and execute multi-step movement orders to complete spatial goals. Tests motor memory, action planning, and spatial precision.',
       tags: ['Motor Planning', 'Sequential Action', 'Working Memory'],
@@ -71,7 +66,6 @@ export default function GameChallenges({ onStartGame }) {
             <div>
               <div className="mf-card-top">
                 <span className="mf-card-badge">{c.badge}</span>
-                <span className="mf-card-emoji">{c.emoji}</span>
               </div>
 
               <h3 className="mf-card-title">{c.title}</h3>
@@ -91,7 +85,7 @@ export default function GameChallenges({ onStartGame }) {
               className="mf-card-btn"
               onClick={() => onStartGame(c.id)}
             >
-              <span>▶</span> {c.btnLabel} <span>→</span>
+              {c.btnLabel} <span>→</span>
             </button>
           </div>
         ))}
