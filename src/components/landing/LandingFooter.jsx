@@ -35,16 +35,45 @@ export default function LandingFooter({ onStartGame, onOpenFacts, onShowCookiePr
       </div>
 
       <div className="mf-footer-bottom">
-        <div>
-          Built with care by <strong>Team Bug Eaters</strong> for IETE Hackathon 2026.
+        <div className="mf-footer-credit-block">
+          <div>
+            Built with care by <strong>Team Bug Eaters</strong> for IETE Hackathon 2026.
+          </div>
+          <div className="mf-footer-contributors">
+            {[
+              { username: 'yugindhanam' },
+              { username: 'hackerjose25' },
+              { username: '7bryan7' },
+            ].map((user) => (
+              <a
+                key={user.username}
+                href={`https://github.com/${user.username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mf-contributor-chip"
+                title={`GitHub: @${user.username}`}
+              >
+                <img
+                  src={`https://github.com/${user.username}.png?size=64`}
+                  alt={user.username}
+                  className="mf-contributor-avatar"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+                <span>@{user.username}</span>
+              </a>
+            ))}
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
           <a href="#challenges">Challenges</a>
           <a href="#camera">Camera Setup</a>
           <a href="#how-it-works">How It Works</a>
           <button
             type="button"
-            style={{ color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}
+            style={{ color: 'inherit', textDecoration: 'underline', cursor: 'pointer', background: 'none', border: 'none', font: 'inherit', padding: 0 }}
             onClick={onShowCookiePrefs}
           >
             Privacy
