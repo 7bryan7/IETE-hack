@@ -1,11 +1,19 @@
 <div align="center">
 
-# 🎮 MotionForge
+<!-- ================= HERO BANNER ================= -->
+<div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 20px; padding: 44px 32px; margin: 24px 0 32px; box-shadow: 0 12px 32px rgba(30, 60, 114, 0.35);">
 
-### *A browser-based, webcam-controlled 2.5D motor-practice playground*
+<p style="margin: 0 0 14px; font-size: 0.85em; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #9fd8e8;">IETE Hackathon · Healthcare &amp; Assistive Technology</p>
 
-<br>
+<h1 style="margin: 0; font-size: 3.4em; font-weight: 800; letter-spacing: 2px; color: #ffffff; line-height: 1.15; border-bottom: none;">MotionForge</h1>
 
+<hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.25); width: 55%; margin: 18px auto;">
+
+<p style="margin: 0; font-size: 1.25em; font-weight: 400; color: #eaf4fb; letter-spacing: 0.5px;">A browser-based, webcam-controlled 2.5D motor-practice playground</p>
+
+</div>
+
+<!-- ================= BADGES ================= -->
 [![Hackathon](https://img.shields.io/badge/Hackathon-IETE-blueviolet?style=for-the-badge&logo=github)](https://github.com/7bryan7/IETE-hack)
 [![Team](https://img.shields.io/badge/Team-Bug%20Eaters-ff6b6b?style=for-the-badge)](#)
 [![Domain](https://img.shields.io/badge/Domain-Healthcare%20%26%20Assistive%20Tech-4ecdc4?style=for-the-badge)](#)
@@ -14,7 +22,7 @@
 
 <br>
 
-> 🖐️ **Move your hand. Grab virtual objects. Complete missions. Get real feedback.**
+**Move your hand. Grab virtual objects. Complete missions. Get real feedback.**
 
 <br>
 
