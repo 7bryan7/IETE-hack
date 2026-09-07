@@ -192,58 +192,6 @@ function GrandMagicTree({ run, reducedMotion }) {
   );
 }
 
-function NovaSpirit({ run, reducedMotion }) {
-  const group = useRef(), wingL = useRef(), wingR = useRef();
-  useFrame(({ clock, camera }) => {
-    if (!group.current) return;
-    const t = clock.elapsedTime;
-    const yaw = run.current.control?.yaw || 0;
-    const tilt = run.current.control?.tilt || 0;
-    const bob = reducedMotion ? 0 : Math.sin(t * 3.2) * 0.12;
-
-    const dist = 7.5;
-    const offsetX = Math.sin(yaw + 0.32) * dist;
-    const offsetZ = 12 - Math.cos(yaw + 0.32) * dist;
-    const offsetY = 4.2 + tilt * 0.35 + bob;
-
-    group.current.position.set(offsetX, offsetY, offsetZ);
-    group.current.lookAt(camera.position);
-
-    if (!reducedMotion && wingL.current && wingR.current) {
-      const flap = Math.sin(t * 14) * 0.45;
-      wingL.current.rotation.y = flap;
-      wingR.current.rotation.y = -flap;
-    }
-  });
-
-  return (
-    <group ref={group}>
-      <mesh>
-        <sphereGeometry args={[0.22, 16, 16]} />
-        <meshStandardMaterial color="#fff3b0" emissive="#ffd752" emissiveIntensity={0.9} roughness={0.1} />
-      </mesh>
-      <mesh>
-        <sphereGeometry args={[0.42, 12, 8]} />
-        <meshBasicMaterial color="#ffe87d" transparent opacity={0.24} depthWrite={false} />
-      </mesh>
-      <mesh ref={wingL} position={[-0.18, 0.08, 0]} rotation={[0, 0, 0.35]}>
-        <planeGeometry args={[0.28, 0.18]} />
-        <meshBasicMaterial color="#fff9d6" transparent opacity={0.7} side={2} depthWrite={false} />
-      </mesh>
-      <mesh ref={wingR} position={[0.18, 0.08, 0]} rotation={[0, 0, -0.35]}>
-        <planeGeometry args={[0.28, 0.18]} />
-        <meshBasicMaterial color="#fff9d6" transparent opacity={0.7} side={2} depthWrite={false} />
-      </mesh>
-      {[0, 1].map(i => (
-        <mesh key={i} position={[Math.cos(i * 3.14) * 0.32, -0.18 - i * 0.1, 0]}>
-          <octahedronGeometry args={[0.045, 0]} />
-          <meshBasicMaterial color="#ffffff" />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
 export function ForestObject({ definition, run, reducedMotion }) {
   const mesh = useRef(), halo = useRef();
   useFrame(({ clock }, dt) => {
@@ -536,7 +484,6 @@ export default function ForestScene({ run, readInput, onSnapshot, reducedMotion 
     <StoneRuins />
     <ForestShrine />
     <GrandMagicTree run={run} reducedMotion={reducedMotion} />
-    <NovaSpirit run={run} reducedMotion={reducedMotion} />
     {checkpoints.map(p => <TrailMarker key={p.id} checkpoint={p} run={run} />)}
     {objectDefinitions.map(o => <React.Fragment key={o.id}><ForestObject definition={o} run={run} reducedMotion={reducedMotion} /><ForestTarget definition={o} run={run} /></React.Fragment>)}
     <Dragonflies run={run} reducedMotion={reducedMotion} />
