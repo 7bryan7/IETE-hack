@@ -1,465 +1,205 @@
-# MotionForge — agents.md
+# MotionForge agent guide
 
-This file defines the three development agents working on MotionForge, their responsibilities, integration boundaries, and the permanent change history of the project.
+This file defines ownership and collaboration rules for the three MotionForge development agents. Product scope, contracts, metric definitions, architecture, and implementation milestones are authoritative in `README.md`; they are not duplicated here.
 
-MotionForge is a browser-based, webcam-controlled **open-world motor coordination environment**. The user should be able to enter an environment containing many objects and freely grab, move, place, drop, throw or activate them. Missions exist inside the environment, but free interaction must remain possible.
+## Shared objective
 
----
-
-# Team
-
-Three members / three development agents are working on the project.
-
-| Agent | Role | Main Ownership |
-|---|---|---|
-| Agent 1 | Frontend & UX | Screens, HUD, calibration UI, environment selection, mission display, results |
-| Agent 2 | Tracking, Logic & Data | Webcam, MediaPipe, calibration, mission logic, scoring, metrics, session state |
-| Agent 3 | Open World, 3D & Interactions | Environments, objects, grabbing, placement, physics, Three.js, 3D assets |
-
-The workload should remain approximately equally divided.
-
----
-
-# Agent 1 — Frontend & UX
-
-## Responsibilities
-
-- React/Next.js app structure
-- Home/start page
-- Calibration screen
-- Environment selection screen
-- Game HUD
-- Mission instructions
-- Object interaction prompts
-- Reward UI
-- Results screen
-- Performance summary
-- Recharts dashboard if added
-- Responsive UI
-- Accessibility-oriented presentation
-- Integration of data from Agents 2 and 3 into the interface
-
-## Primary files/modules
+Deliver one reliable vertical slice:
 
 ```text
-app/
-components/ui/
-components/hud/
-components/results/
-components/calibration/
+camera permission
+  → calibration
+  → tracked hand pointer
+  → pinch to grab
+  → move and place an object in a 2.5D playroom
+  → complete one optional mission
+  → show continuous and final performance metrics
 ```
 
-## Must coordinate before changing
+The mouse adapter must remain usable throughout development and in the final build as a fallback.
 
-- MediaPipe tracking
-- Mission scoring formulas
-- Physics
-- 3D world state
+## Shared rules
 
----
+1. Build only the README MVP until the complete vertical slice is stable.
+2. Treat `src/core/contracts.ts` as a shared integration boundary.
+3. Contract changes require agreement from all three agents before implementation.
+4. Keep MediaPipe isolated from world, mission, and UI state.
+5. Keep the interaction engine independent of its input source.
+6. Keep missions data-driven and independent of rendering components.
+7. Do not add authentication, a backend, pose tracking, physics, charts, or full 3D depth interaction during the initial build.
+8. Never store webcam frames or video.
+9. Preserve non-clinical language for all metrics and scores.
+10. Make small commits and keep the integration branch runnable.
+11. Add automated tests for pure mission, metric, tracking-transform, and persistence logic.
+12. Optional polish must not weaken the working interaction path.
 
-# Agent 2 — Tracking, Logic & Data
+## Balanced ownership
 
-## Responsibilities
+The work is divided into three comparable streams. Each agent owns implementation and tests for its stream, plus one-third of integration and demo verification.
 
-- `getUserMedia()` webcam integration
-- MediaPipe Hand Landmarker
-- MediaPipe Pose Landmarker when required
-- Hand landmark processing
-- Pose landmark processing
+### Agent 1 — Experience, local data, accessibility, and verification
+
+Owns:
+
+- Vite application shell and navigation
+- Home, permission, and calibration screens
+- Camera permission, denial, and recovery UX
+- Playroom HUD and mission instructions
+- Live metric presentation
+- Results, restart, recovery, and continue-exploring flows
+- Browser-local IndexedDB repository and schema
+- Batched persistence of movement samples, interaction events, task records, and performance snapshots
+- Lightweight `localStorage` preferences and recovery metadata
+- Local performance history, previous-task comparison, and personal-best presentation
+- Local-data retention and reset controls
+- Visual feedback for hover, grabbed, tracking loss, and mission completion
+- Keyboard/mouse-accessible controls and readable presentation
+- Persistence tests, including refresh recovery and offline operation
+- Playwright smoke path and demo checklist
+- Deployment configuration and deployed-build verification
+
+Primary areas:
+
+```text
+src/app/
+src/components/calibration/
+src/components/hud/
+src/components/results/
+src/storage/
+src/styles/
+```
+
+Deliverable: a complete user journey and offline local history that work first with mock data and mouse input, then with integrated tracking, interaction events, and metrics.
+
+### Agent 2 — Camera, tracking, and input quality
+
+Owns:
+
+- Webcam lifecycle and cleanup
+- MediaPipe Hand Landmarker initialization
+- Landmark extraction and timestamp handling
+- Mirroring and normalized coordinate mapping
 - Calibration logic
-- Coordinate normalization
-- Screen/world coordinate mapping
-- Hand visibility state
-- Mission state machine
-- Timer
-- Action tracking
-- Accuracy calculation
-- Error calculation
+- Index-finger/palm pointer selection
+- Palm-normalized pinch calculation
+- Grab/release hysteresis
+- Pointer smoothing and confidence handling
+- Short tracking-loss grace behavior
+- `HandPointer` production
+- Mouse-to-`HandPointer` adapter contract support
+- Tracking debug panel and performance tuning
+- Unit tests for pinch classification and coordinate transforms
+
+Primary areas:
+
+```text
+src/components/camera/
+src/tracking/
+src/core/contracts.ts
+```
+
+Deliverable: a stable `HandPointer` stream with the coordinate and gesture behavior defined in the README.
+
+### Agent 3 — Playroom, interaction, missions, and performance
+
+Owns:
+
+- Orthographic 2.5D playroom rendering
+- Data-driven world object definitions
+- Object hit testing and deterministic selection
+- Hover, grab, drag, drop, and place state machine
+- Interaction target zones
+- World state updates
+- `InteractionEvent` production
+- Optional mission state and evaluator
+- Continuous performance accumulator
 - Score calculation
-- Session result structure
-- Zustand state if required
-- Supabase persistence if later added
+- Metric reset and finalization hooks for session lifecycle events
+- Vitest coverage for interactions, missions, and metrics
 
-## Primary files/modules
-
-```text
-components/camera/
-components/tracking/
-lib/mediapipe/
-lib/missions/
-lib/scoring/
-types/
-```
-
-## Core output
-
-```ts
-type TrackingPoint = {
-  x: number;
-  y: number;
-  visible: boolean;
-};
-```
-
-## Mission result
-
-```ts
-type MissionResult = {
-  missionId: string;
-  durationMs: number;
-  successfulActions: number;
-  totalActions: number;
-  errors: number;
-  accuracy: number;
-  score: number;
-};
-```
-
----
-
-# Agent 3 — Open World, 3D & Interactions
-
-## Responsibilities
-
-- Build open-world environment
-- Render many objects simultaneously
-- Maintain world object states
-- Object hitboxes
-- Hover/proximity detection
-- Grab logic
-- Held-object state
-- Move logic
-- Drop logic
-- Placement zones
-- Throw interaction
-- Stack interaction
-- Push/pull if added
-- Interaction zones
-- Three.js
-- React Three Fiber
-- GLTF/GLB asset integration
-- Asset optimization
-- Rapier physics
-- Collision detection
-- Lightweight environment design
-
-## Primary files/modules
+Primary areas:
 
 ```text
-components/environment/
-components/objects/
-lib/interactions/
-lib/physics/
-data/environments/
-data/objects/
-public/models/
+src/components/playroom/
+src/core/interaction/
+src/core/missions/
+src/core/performance/
+src/data/
+src/state/
 ```
 
-## Core rule
+Deliverable: the mouse-controlled interaction, mission, and metric-calculation flow first, followed by integration with Agent 2's `HandPointer` and Agent 1's UI and persistence repository.
 
-Do not build a visually complex 3D scene before the following works:
+## Shared integration responsibilities
+
+Ownership does not mean isolation. Each agent must reserve time for the following shared work:
+
+| Integration checkpoint | Lead | Required participants |
+|---|---|---|
+| Contract review and app scaffold | Agent 1 | Agents 2 and 3 |
+| `HandPointer` into interaction engine | Agent 2 | Agents 1 and 3 |
+| Interactions, mission events, and metric calculation | Agent 3 | Agents 1 and 2 |
+| Local persistence, results, recovery, and restart | Agent 1 | Agents 2 and 3 |
+| Device, lighting, browser, and deployment test | Rotating | All agents |
+
+If one stream finishes early, that agent moves to integration tests, debugging, accessibility, or demo hardening rather than beginning post-MVP features.
+
+## Recommended working sequence
+
+### Checkpoint 1 — Contract and scaffold
+
+All agents agree on the contracts in the README. Agent 1 creates the application shell while Agents 2 and 3 create compile-safe adapters against those contracts.
+
+### Checkpoint 2 — Independent foundations
+
+- Agent 1 uses mock snapshots and events to finish the user flow, local repository, and performance-history flow.
+- Agent 2 proves camera → pointer → pinch with a visible debug overlay.
+- Agent 3 proves mouse → grab → move → place → mission → metrics.
+
+### Checkpoint 3 — Vertical integration
+
+Replace mouse input with live `HandPointer` data without changing the interaction engine. Connect real movement samples, interaction events, task records, and performance snapshots to Agent 1's local repository, HUD, and results screen.
+
+### Checkpoint 4 — Reliability
+
+Test the deployed build on the actual demonstration hardware. Fix reliability problems before adding rewards or scene polish.
+
+### Checkpoint 5 — Feature freeze
+
+Stop adding features. Rehearse permission handling, calibration, the mission, results, restart, and mouse fallback.
+
+## Git and coordination
+
+- Use one short-lived branch per bounded change.
+- Rebase or merge from the integration branch before handoff.
+- Prefer small pull requests that preserve a runnable app.
+- Record breaking contract decisions in the pull request and README.
+- Do not use this file as an append-only change log; Git history is the change record.
+- Report blockers immediately when they affect another agent's integration boundary.
+
+Suggested checkpoints:
 
 ```text
-Hand Coordinate
-→ Detect Object
-→ Grab
-→ Move
-→ Drop / Place
+chore/app-scaffold
+feat/camera-tracking
+feat/playroom-interaction
+feat/mission-metrics
+test/demo-hardening
 ```
 
-The first environment may use simple geometry or lightweight assets.
-
----
-
-# Open-World Design Rules
-
-All agents must preserve the following behavior:
-
-1. The environment contains many objects at the same time.
-2. The user is not locked to a single object.
-3. The user may choose which object to interact with.
-4. Missions are optional structures inside the world.
-5. Non-mission objects should still remain interactable where practical.
-6. The same interaction engine should support many objects.
-7. New missions should reuse existing object and interaction systems.
-8. Do not create each mission as a completely separate game unless necessary.
-
----
-
-# Shared Development Rules
-
-1. Build the MVP before advanced features.
-2. Do not prioritize login/register.
-3. Do not create unnecessary backend complexity.
-4. Keep camera processing browser-side.
-5. Keep modules independent.
-6. Avoid unnecessary edits to another agent's files.
-7. Commit small working changes.
-8. Keep the integration branch runnable.
-9. Update this file after every meaningful change.
-10. Never remove existing history entries.
-11. Record integration-breaking changes immediately.
-12. Optional features must not break the working prototype.
-
----
-
-# Shared Data Contracts
-
-## Tracking point
-
-```ts
-type TrackingPoint = {
-  x: number;
-  y: number;
-  visible: boolean;
-};
-```
-
-## World object
-
-```ts
-type WorldObject = {
-  id: string;
-  type: string;
-  position: {
-    x: number;
-    y: number;
-    z?: number;
-  };
-  movable: boolean;
-  grabbable: boolean;
-  interactionType: string[];
-};
-```
-
-## Interaction event
-
-```ts
-type InteractionEvent = {
-  objectId: string;
-  action:
-    | "touch"
-    | "grab"
-    | "move"
-    | "drop"
-    | "place"
-    | "throw";
-  timestamp: number;
-};
-```
-
-## Mission result
-
-```ts
-type MissionResult = {
-  missionId: string;
-  durationMs: number;
-  successfulActions: number;
-  totalActions: number;
-  errors: number;
-  accuracy: number;
-  score: number;
-};
-```
-
----
-
-# Parallel Development Plan
-
-## Phase 1 — Basic Working Model
-
-### Agent 1
-
-Build:
-
-- Home screen
-- Calibration UI
-- Environment selection
-- Environment HUD
-- Mission display
-- Results UI
-
-### Agent 2
-
-Build:
-
-- Webcam
-- MediaPipe Hand
-- Tracking coordinates
-- Calibration
-- Mission state
-- Timer
-- Scoring
-
-### Agent 3
-
-Build:
-
-- One open-world room
-- Several objects
-- Object hitboxes
-- Mock-pointer interaction
-- Grab
-- Move
-- Drop
-- Place
-
----
-
-# First Integration Milestone
-
-```text
-Agent 2
-Hand Tracking
-↓
-TrackingPoint
-
-Agent 3
-Open-World Interaction
-↓
-InteractionEvent
-
-Agent 2
-Mission + Score
-↓
-MissionResult
-
-Agent 1
-HUD + Results
-```
-
-This is the highest-priority integration milestone.
-
----
-
-# Phase 2 — Expansion
-
-## Agent 1
-
-- Reward animations
-- Better HUD
-- Environment cards
-- Progress UI
-- Charts
-
-## Agent 2
-
-- Pose tracking
-- Better scoring
-- Additional mission rules
-- Session history
-- Adaptive difficulty logic
-
-## Agent 3
-
-- More objects
-- More interactions
-- Three.js environment
-- GLTF/GLB assets
-- Rapier physics
-- Throwing
-- Stacking
-- Multiple environments
-
----
-
-# Change History
-
-Every agent must append changes using the following format.
-
-```md
-### [Date/Time] — Agent X — Change title
-
-- **Module:** affected module
-- **Files:** files/directories changed
-- **Changes:** what was implemented or modified
-- **Reason:** why the change was needed
-- **Integration impact:** anything the other agents must know
-- **Status:** Complete / In Progress / Needs Testing
-```
-
-Do not rewrite previous entries.
-
----
-
-# Initial History
-
-### Project Planning — Shared
-
-- **Module:** Architecture and development planning
-- **Files:** `README.md`, `agents.md`
-- **Changes:** Defined MotionForge as a browser-based webcam-controlled open-world motor coordination environment. Added project problem context, target users, innovation gap, existing solutions, complete proposed technology stack, feasibility, risks, expected impact, limitations and future scope from the idea presentation.
-- **Reason:** Keep implementation aligned with the hackathon proposal.
-- **Integration impact:** All three agents must follow the same open-world interaction model.
-- **Status:** Complete
-
-### Open-World Requirement — Shared
-
-- **Module:** Product behavior
-- **Files:** `README.md`, `agents.md`
-- **Changes:** Added the requirement that environments contain many objects and users can freely choose, grab and interact with objects rather than only following rigid mission steps.
-- **Reason:** MotionForge should feel like a free interactive environment, not only a sequence of mini-games.
-- **Integration impact:** Mission logic must not disable unrelated object interaction. Object systems must be reusable across missions.
-- **Status:** Complete
-
-### Initial Assignment — Agent 1
-
-- **Module:** Frontend & UX
-- **Files:** To be created
-- **Changes:** Assigned UI, calibration, environment selection, HUD, mission display, rewards and results.
-- **Reason:** Allow frontend development to proceed independently.
-- **Integration impact:** Must consume shared tracking/mission state without duplicating tracking or scoring logic.
-- **Status:** Assigned
-
-### Initial Assignment — Agent 2
-
-- **Module:** Tracking, Logic & Data
-- **Files:** To be created
-- **Changes:** Assigned webcam, MediaPipe, coordinate mapping, mission engine, timer, accuracy, errors, scoring and session state.
-- **Reason:** Centralize tracking and measurement logic.
-- **Integration impact:** Must expose stable hand coordinates to Agent 3 and mission results to Agent 1.
-- **Status:** Assigned
-
-### Initial Assignment — Agent 3
-
-- **Module:** Open World, 3D & Interactions
-- **Files:** To be created
-- **Changes:** Assigned environment rendering, many-object world state, grabbing, moving, placement, Three.js, assets and physics.
-- **Reason:** Separate world/interaction development from tracking and frontend work.
-- **Integration impact:** Initially support mock pointer coordinates, then switch to Agent 2's tracking output.
-- **Status:** Assigned
-
----
-
-# Current Priority
-
-The three agents are working toward this single milestone:
-
-```text
-Open browser
-↓
-Allow webcam
-↓
-Calibrate hand
-↓
-Enter environment
-↓
-See many objects
-↓
-Choose any supported object
-↓
-Grab it
-↓
-Move / Drop / Place it
-↓
-Optional mission completes
-↓
-Performance is calculated
-↓
-Results are shown
-```
-
-If this works smoothly, MotionForge has demonstrated its core innovation.
-
-Everything else is an enhancement.
+## Completion gate
+
+The three streams are complete only when their work functions together in the deployed MVP. A component working in isolation is an intermediate result, not project completion.
+
+Post-MVP work may begin only after all agents confirm:
+
+- Webcam and mouse input both work.
+- Pinch grab/release is stable.
+- Objects can be placed reliably.
+- The mission completes correctly.
+- Continuous and final metrics agree.
+- Movement samples, actions, task records, and summaries persist locally and survive a refresh.
+- Local tracking and history work without a network connection.
+- Restart works without refreshing.
+- No webcam frames or video are stored or transmitted.
+- The demo succeeds on the target laptop and browser.

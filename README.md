@@ -1,1041 +1,484 @@
 # MotionForge
 
-MotionForge is a **completely web-based, webcam-controlled AR gamified environment** designed to help children and adults practice motor coordination and movement planning through physical interaction with virtual objects.
+MotionForge is a browser-based, webcam-controlled 2.5D motor-practice playground. Users move a hand in front of a standard webcam to select, grab, move, drop, and place virtual objects while exploring an interactive scene and completing optional missions.
 
-The core idea is not a sequence of rigid mini-games. MotionForge is designed as an **open-world interactive environment** containing many objects. The user can freely explore the scene, reach for objects, grab them, move them, place them, throw them, combine them, or use them to complete optional missions. The system observes how the user moves and interacts, measures performance, and summarizes progress.
+The hackathon prototype is intended to demonstrate accessible, camera-driven interaction and transparent performance feedback. It is not a diagnostic tool, a replacement for professional assessment, or a clinically validated treatment.
 
-**Core loop:**  
-**Learn → Move → Play → Get Rewarded → Improve**
+**Core loop:** Learn → Move → Play → Get feedback → Improve
 
----
+## 1. Hackathon context
 
-# 1. Hackathon Context
-
-- **Team Name:** Bug Eaters
+- **Team:** Bug Eaters
 - **Domain:** Healthcare and Assistive Technology
-- **Problem Statement:** Motor Coordination & Movement Planning
-- **Solution Type:** Software
-- **Project Name:** MotionForge
+- **Problem:** Motor coordination and movement planning
+- **Solution type:** Browser software
+- **Project:** MotionForge
 
----
+## 2. Problem and users
 
-# 2. Problem Statement
-
-Some children may experience difficulty with:
+MotionForge is intended to help users practise activities involving:
 
 - Hand-eye coordination
-- Simultaneous physical movements
-- Sequential and accurate movements
+- Movement accuracy and control
+- Sequential actions
+- Left/right-hand awareness
 - Movement planning
-- Completing physical actions in the correct order
 
-### Target users
+Potential users include children and adults with movement-related difficulties, including some autistic users, as well as parents, teachers, and therapists who support them.
 
-- Children with autism
-- Children or adults with movement-related disabilities
-- Parents
-- Teachers
-- Therapists
+The prototype only measures interaction performance inside MotionForge. Any future therapeutic claims, clinical thresholds, or claims of improved health outcomes would require domain-expert involvement and proper user studies.
 
-### Background research from the idea PPT
+## 3. Product concept
 
-- About **1 in 127 people globally were estimated to have autism in 2021**.
-- In some poorer countries, **as low as 3% of assistive-technology needs are met**.
+Unlike a menu of disconnected mini-games, MotionForge provides one persistent scene containing several independently interactable objects. Missions give the user optional goals, but unrelated objects remain available for free exploration.
 
----
+The first environment is a 2.5D playroom containing simple objects such as:
 
-# 3. Innovation Gap
+- Balls and blocks
+- A basket or box
+- A shelf or target zone
+- Rings, stars, and buttons
 
-Existing solutions commonly provide interactive games or therapeutic activities, but several gaps remain:
+Supported MVP actions are:
 
-- Many systems are limited to predefined movements and fixed tasks.
-- Some require desktop software or installation.
-- Some require special hardware or AR devices.
-- Many solutions provide only trial access or subscription-based usage.
-- Existing experiences often behave like separate mini-games instead of a persistent interactive environment.
-- There is room for a browser-based platform where users can interact freely with many objects in a real-world-like environment.
-
-### Existing examples referenced in the idea PPT
-
-- WonderTree
-- HandCity
-- InclusionGames
-- Timocco
-- MotionInput Games
-
-These are useful references, but MotionForge aims to differentiate itself through a **browser-based open-world interaction model** rather than only fixed game screens.
-
----
-
-# 4. MotionForge Solution
-
-MotionForge is a webcam-controlled interactive environment where the user uses their **hands and body movements** to interact with virtual objects.
-
-The platform should eventually provide multiple environments such as:
-
-- Playroom
-- Park
-- Beach
-- Space
-
-Inside each environment, many objects are placed around the user.
-
-Examples:
-
-- Balls
-- Blocks
-- Stars
-- Boxes
-- Baskets
-- Rings
-- Toys
-- Bottles
-- Cubes
-- Targets
-- Doors
-- Buttons
-- Levers
-- Collectibles
-
-The user is **not forced to follow one rigid action path**.
-
-They may:
-
-- Grab any available object
-- Move it
-- Drop it
-- Throw it
-- Place it inside another object
-- Stack objects
-- Touch or activate objects
-- Move objects from one area to another
-- Complete optional missions
-- Ignore a mission temporarily and explore the environment
-
-The system evaluates the user's movements during these interactions.
-
----
-
-# 5. Open-World Interaction Model
-
-This is a major design requirement.
-
-MotionForge should behave like an **open-world motor activity playground**, not only a collection of separate mini-games.
-
-### Environment model
-
-Each environment contains:
-
-- Many visible interactive objects
-- Several possible actions
-- Optional mission objectives
-- Reward objects
-- Interactive zones
-- Free exploration
-
-### Example: Playroom
-
-Objects:
-
-- Ball
-- Toy blocks
-- Basket
-- Shelf
-- Ring
-- Star
-- Box
-- Toy car
-
-Possible free actions:
-
-- Pick up ball
-- Throw ball
-- Place ball in basket
-- Move block
-- Stack block
-- Touch star
-- Move ring
-- Put toy inside box
-
-Possible missions:
-
-- Put the red ball in the basket
-- Move three blocks to the shelf
-- Touch the star with the right hand
-- Pick up the ring and move it across the body
-- Stack two blocks
-- Throw the ball toward the target
-
-The important point is that **objects remain freely interactable even when a mission exists**.
-
----
-
-# 6. Web Application Workflow
-
-**Open MotionForge → Allow Camera → Calibrate → Choose Environment → Enter Open World → Explore Objects → Grab / Move / Throw / Place → Optional Mission Completion → Performance Measurement → Feedback & Rewards → Progress Summary**
-
-### Detailed workflow
-
-1. User opens MotionForge.
-2. Browser requests webcam access.
-3. Calibration verifies that the user's hand/body is visible.
-4. User chooses an environment.
-5. The selected open-world environment loads.
-6. Webcam remains visible or blended with the environment.
-7. MediaPipe tracks hand/body landmarks locally in the browser.
-8. Tracking coordinates are mapped to interaction coordinates.
-9. User can freely move around the available interaction space.
-10. User can grab any supported object.
-11. Object interaction logic reacts to hand movement.
-12. Mission engine optionally detects whether a goal has been completed.
-13. System records:
-   - movement accuracy
-   - completion time
-   - errors
-   - successful actions
-   - coordination
-14. User receives reward/feedback.
-15. Session performance is summarized.
-16. User can continue exploring or choose another mission/environment.
-
----
-
-# 7. Development Strategy
-
-The project must be developed in two stages.
-
-## Stage A — Basic Working Model First
-
-The first version should prove the central technical idea.
-
-### Required first prototype
-
-- Browser application
-- Webcam access
-- MediaPipe hand tracking
-- One open-world room/environment
-- Several interactive objects visible at the same time
-- User can freely choose an object
-- User can grab at least one object type
-- User can move/drop/place the object
-- One optional mission
-- Timer
-- Success/error tracking
-- Basic score/result screen
-
-### MVP success condition
-
-A judge should be able to:
-
-1. Open the browser.
-2. Allow webcam.
-3. Enter one environment.
-4. See multiple objects.
-5. Move their hand.
-6. Grab any supported object.
-7. Move or place it.
-8. Complete an optional mission.
-9. Receive a performance result.
-
-Do not begin with login/register or complex backend features.
-
----
-
-# 8. Step-by-Step Build Process
-
-## Module 1 — Project Setup
-
-Goal: Create the basic web application.
-
-Tasks:
-
-1. Create React + TypeScript + Next.js project.
-2. Create simple navigation.
-3. Add:
-   - Home
-   - Calibration
-   - Environment
-   - Results
-4. Configure GitHub.
-5. Keep the project runnable for all three members.
-
-Output: Browser application opens and reaches the environment page.
-
----
-
-## Module 2 — Webcam
-
-Goal: Display live webcam feed.
-
-Tasks:
-
-1. Use `getUserMedia()`.
-2. Ask for webcam permission.
-3. Display mirrored webcam.
-4. Handle camera errors.
-5. Keep processing browser-side.
-
-Output: Stable webcam feed.
-
----
-
-## Module 3 — Hand Tracking
-
-Goal: Detect hand position.
-
-Technology:
-
-- MediaPipe Hand Landmarker
-
-Tasks:
-
-1. Detect at least one hand.
-2. Extract hand/palm/index-finger coordinates.
-3. Draw a debug marker.
-4. Convert normalized coordinates into interaction-space coordinates.
-5. Smooth noisy movement if necessary.
-
-Output: Virtual pointer follows the user's hand.
-
----
-
-## Module 4 — Open-World Environment
-
-Goal: Build one environment containing many objects.
-
-Start with a simple room or playroom.
-
-Do not begin with a highly detailed 3D world.
-
-Tasks:
-
-1. Create one environment.
-2. Add multiple objects at once.
-3. Assign every object:
-   - ID
-   - position
-   - size
-   - interaction type
-   - movable/non-movable state
-4. Render all objects together.
-5. Allow user to approach any object freely.
-
-Output: One open world with many interactable objects.
-
----
-
-## Module 5 — Object Interaction System
-
-Goal: Allow users to interact freely.
-
-Initial interactions:
-
+- Hover
 - Touch
 - Grab
 - Move
 - Drop
-- Place
+- Place inside a target zone
 
-Later interactions:
+Throwing, stacking, physical collisions, pose-controlled movement, and multiple environments are post-MVP features.
 
-- Throw
-- Stack
-- Push
-- Pull
-- Activate
-- Insert object into container
+## 4. MVP definition
 
-### Suggested interaction state
+A successful hackathon demonstration lets a judge:
 
-```text
-IDLE
-↓
-HOVER / NEAR OBJECT
-↓
-GRAB
-↓
-HELD
-↓
-MOVE
-↓
-DROP / PLACE / THROW
-```
+1. Open MotionForge in a supported desktop browser over HTTPS or localhost.
+2. Allow webcam access.
+3. Complete a short hand calibration.
+4. Enter the playroom and see several objects.
+5. Move a visible hand-controlled pointer.
+6. Hover over any supported object.
+7. Pinch to grab and move an object.
+8. Release to drop or place it.
+9. Complete the optional “place the red ball in the basket” mission.
+10. See live and final performance metrics.
+11. Continue exploring or restart the mission without refreshing the page.
 
-Output: User can choose an object and manipulate it.
+The MVP deliberately excludes authentication, a backend, clinical scoring, full 3D depth control, realistic physics, and downloaded 3D asset pipelines.
 
----
-
-## Module 6 — Interaction Zones
-
-Goal: Make webcam-based interaction practical.
-
-Because true depth estimation is difficult, use constrained interaction zones.
-
-Examples:
-
-- Object hitbox
-- Grab radius
-- Drop zone
-- Basket area
-- Target zone
-- Shelf zone
-
-Use simplified depth estimation where needed.
-
-Output: Reliable interaction without requiring precise 3D depth sensing.
-
----
-
-## Module 7 — Mission Engine
-
-Goal: Add optional structured objectives without removing free exploration.
-
-Example mission:
-
-**"Place the red ball inside the basket."**
-
-Mission states:
+## 5. User flow
 
 ```text
-AVAILABLE
-→ ACTIVE
-→ PROGRESS
-→ COMPLETED
+Home
+  → Camera permission
+  → Calibration
+  → Playroom
+  → Free interaction and optional mission
+  → Live feedback
+  → Results summary
+  → Continue exploring or restart
 ```
 
-Possible mission types:
+If the camera is unavailable or permission is denied, the app should explain the problem and provide mouse input as a demo and accessibility fallback.
 
-- Reach
-- Grab
-- Move
-- Place
-- Throw
-- Touch in sequence
-- Use left/right hand
-- Cross-body movement
-- Stack objects
+## 6. Interaction model
 
-The user should still be free to interact with unrelated objects.
+### 6.1 Coordinate system
 
-Output: Open-world interaction + mission completion.
+The tracking adapter exposes normalized interaction coordinates:
 
----
+- `x` and `y` are in the inclusive range `0..1`.
+- The origin is the top-left of the visible interaction viewport.
+- `x` increases to the right and `y` increases downward.
+- Mirroring is performed once inside the tracking adapter because the webcam preview is mirrored.
+- Rendering code converts normalized coordinates to viewport or world coordinates.
+- Camera cropping and the interaction canvas must use the same aspect-ratio policy.
 
-## Module 8 — Scoring & Performance
+The 2.5D scene uses an orthographic interaction plane. Visual depth, shadows, layers, and simple 3D models may be used, but users are not required to control real-world depth with a monocular webcam.
 
-Measure simple, understandable metrics.
+### 6.2 Pointer and grab gesture
 
-Track:
+The pointer is derived from the index fingertip. If fingertip motion is too noisy on the demo hardware, the palm centre may be used as a configurable fallback.
 
-- Completion time
-- Successful actions
-- Errors
-- Wrong-object selections
-- Missed targets
-- Movement accuracy
-- Mission completion
-- Final score
+A grab is a thumb–index pinch:
 
-Example:
+1. Calculate the distance between the thumb tip and index tip.
+2. Divide it by a palm-size reference so the threshold is not dependent on distance from the camera.
+3. Enter `pinching` when the normalized distance falls below the configured grab threshold.
+4. Remain pinching until the distance rises above a larger release threshold.
+
+Using separate grab and release thresholds provides hysteresis and prevents rapid state flicker. Thresholds are selected during device testing and may be adjusted during calibration.
+
+### 6.3 Object interaction states
 
 ```text
-Accuracy = Successful Required Actions / Total Required Actions × 100
+idle
+  → hovering
+  → grabbed
+  → dragging
+  → released outside a target: dropped
+  → released inside a valid target: placed
 ```
 
-Avoid medically claiming that this is a diagnostic score.
-
-Output: Session metrics.
-
----
-
-## Module 9 — Feedback & Rewards
-
-Show:
-
-- Mission Complete
-- Stars/reward
-- Time taken
-- Accuracy
-- Errors
-- Score
-- Try Again
-- Continue Exploring
-- Next Mission
-
-Output: Rewarding feedback loop.
-
----
-
-# 9. Basic Working Model Complete
-
-The minimum complete technical pipeline is:
-
-```text
-Webcam
-↓
-MediaPipe Hand Tracking
-↓
-Hand Coordinates
-↓
-Open-World Interaction Space
-↓
-Object Selection
-↓
-Grab / Move / Place
-↓
-Mission Detection
-↓
-Performance Metrics
-↓
-Feedback
-```
-
-Create a stable Git checkpoint before adding advanced features.
-
----
-
-# 10. Additional Functionalities
-
-Only implement these after the first working model is stable.
-
-## Priority 1 — More Objects
-
-Add more object types with different interactions.
-
-## Priority 2 — More Missions
-
-Add distinctive movement challenges.
-
-## Priority 3 — Pose Tracking
-
-Technology:
-
-- MediaPipe Pose Landmarker
-
-Use it for:
-
-- Arms
-- Shoulders
-- Torso
-- Larger movements
-- Two-hand activities
-
-## Priority 4 — 3D Environment
-
-Technology:
-
-- Three.js
-- React Three Fiber
-
-Add:
-
-- 3D rooms
-- GLTF/GLB models
-- Environment lighting
-- Camera setup
-- Object animations
-
-## Priority 5 — Physics
-
-Technology:
-
-- Rapier
-- `@react-three/rapier`
-
-Use only where required:
-
-- Gravity
-- Throwing
-- Bouncing
-- Collision
-
-## Priority 6 — Multiple Environments
-
-Possible environments:
-
-- Playroom
-- Park
-- Beach
-- Space
-
-## Priority 7 — Performance Dashboard
-
-Technology:
-
-- Recharts
-
-Show:
-
-- Missions completed
-- Average accuracy
-- Total score
-- Improvement over sessions
-
-## Priority 8 — Data Persistence
-
-Technology:
-
-- Supabase
-
-Use for:
-
-- Session results
-- Performance history
-
-Authentication is not a hackathon priority.
-
-## Priority 9 — Adaptive Difficulty
-
-Future functionality:
-
-- Smaller/larger targets
-- Different object distances
-- More complex sequences
-- Longer missions
-- Different allowed times
-- Different hand requirements
-
----
-
-# 11. Planned Technology Stack
-
-### Frontend
-
-- React
-- TypeScript
-- Next.js
-
-### 3D Engine
-
-- Three.js
-- React Three Fiber
-
-### Hand Tracking
-
-- MediaPipe Hand Landmarker
-
-### Body Tracking
-
-- MediaPipe Pose Landmarker
-
-### Webcam
-
-- WebRTC
-- `getUserMedia()`
-
-### Physics
-
-- Rapier
-- `@react-three/rapier`
-
-### 3D Assets
-
-- GLTF
-- GLB
-
-### Free Asset Sources
-
-- Sketchfab
-- Poly Pizza
-- Kenney
-
-### State Management
-
-- Zustand
-
-Use for:
-
-- Missions
-- Scores
-- Object states
-- Held object
-- Current environment
-
-### Database
-
-- Supabase
-
-Use later for session/results storage.
-
-### Charts
-
-- Recharts
-
-### Deployment & Version Control
-
-- Vercel
-- GitHub
-
----
-
-# 12. Suggested Project Structure
-
-```text
-motionforge/
-├── app/
-│   ├── page.tsx
-│   ├── calibration/
-│   ├── environment/
-│   └── results/
-│
-├── components/
-│   ├── camera/
-│   ├── tracking/
-│   ├── environment/
-│   ├── objects/
-│   ├── missions/
-│   ├── hud/
-│   └── results/
-│
-├── lib/
-│   ├── mediapipe/
-│   ├── interactions/
-│   ├── scoring/
-│   ├── missions/
-│   └── physics/
-│
-├── data/
-│   ├── environments/
-│   ├── objects/
-│   └── missions/
-│
-├── public/
-│   ├── models/
-│   └── assets/
-│
-├── types/
-├── agents.md
-└── README.md
-```
-
----
-
-# 13. Three-Person / Three-Agent Development Plan
-
-Three members are working on MotionForge.
-
-## Agent 1 — Frontend & UX
-
-Owns:
-
-- App pages
-- Calibration UI
-- Environment selection
-- HUD
-- Mission instructions
-- Results
-- Rewards
-- Charts
-- Responsive design
-
-## Agent 2 — Tracking, Logic & Data
-
-Owns:
-
-- Webcam
-- MediaPipe Hand
-- MediaPipe Pose
-- Calibration logic
-- Coordinate mapping
-- Mission engine
-- Timer
-- Accuracy
-- Errors
-- Score
-- Session data
-- Zustand/Supabase integration when needed
-
-## Agent 3 — Open World, 3D & Interactions
-
-Owns:
-
-- Environment rendering
-- Multiple objects
-- Object states
-- Grab/drop/place
-- Drag/throw
-- Interaction zones
-- Three.js
-- GLTF/GLB assets
-- Rapier physics
-- Object collision logic
-
----
-
-# 14. Integration Contracts
-
-## Tracking output
+Rules:
+
+- Only a visible, grabbable object under the pointer may be grabbed.
+- If objects overlap, select the closest eligible object according to a deterministic render/order rule.
+- The selected object displays hover and grabbed feedback.
+- A short tracking-loss grace period may preserve a grab for approximately 100–200 ms.
+- Longer tracking loss safely releases the object at its last valid position.
+- Pointer motion is smoothed, but the raw sample remains available for debugging.
+- Mission state never disables unrelated free interaction.
+
+## 7. Shared contracts
+
+These contracts are the integration boundary between tracking, world interaction, mission evaluation, and UI. Changes require agreement from all three agents.
 
 ```ts
-type TrackingPoint = {
+type Handedness = "left" | "right" | "unknown";
+
+type HandPointer = {
+  handId: string;
+  handedness: Handedness;
   x: number;
   y: number;
+  rawX: number;
+  rawY: number;
+  pinch: boolean;
+  pinchStrength: number;
+  confidence: number;
   visible: boolean;
+  timestampMs: number;
 };
-```
 
-## World object
-
-```ts
 type WorldObject = {
   id: string;
-  type: string;
-  position: { x: number; y: number; z?: number };
-  movable: boolean;
+  kind: "ball" | "block" | "basket" | "ring" | "star" | "button";
+  position: { x: number; y: number; layer: number };
+  size: { width: number; height: number };
   grabbable: boolean;
-  interactionType: string[];
+  movable: boolean;
+  tags: string[];
+  acceptsTags?: string[];
 };
-```
 
-## Interaction event
+type InteractionAction =
+  | "hover"
+  | "touch"
+  | "grab"
+  | "move"
+  | "drop"
+  | "place";
 
-```ts
 type InteractionEvent = {
+  eventId: string;
+  sessionId: string;
   objectId: string;
-  action: "touch" | "grab" | "move" | "drop" | "place" | "throw";
-  timestamp: number;
+  action: InteractionAction;
+  position: { x: number; y: number };
+  targetId?: string;
+  handId?: string;
+  timestampMs: number;
 };
-```
 
-## Mission result
+type MovementSample = {
+  sampleId: string;
+  sessionId: string;
+  handId?: string;
+  objectId?: string;
+  x: number;
+  y: number;
+  pinch: boolean;
+  trackingConfidence: number;
+  timestampMs: number;
+};
 
-```ts
-type MissionResult = {
+type TaskRecord = {
+  taskId: string;
+  sessionId: string;
   missionId: string;
-  durationMs: number;
-  successfulActions: number;
-  totalActions: number;
-  errors: number;
-  accuracy: number;
-  score: number;
+  status: "completed" | "abandoned";
+  startedAtMs: number;
+  endedAtMs: number;
+  finalSnapshot: PerformanceSnapshot;
+};
+
+type MissionStatus = "available" | "active" | "completed" | "abandoned";
+
+type PerformanceSnapshot = {
+  sessionId: string;
+  missionId?: string;
+  status: MissionStatus;
+  elapsedMs: number;
+  successfulRequiredActions: number;
+  requiredActionAttempts: number;
+  wrongObjectGrabs: number;
+  failedDrops: number;
+  totalErrors: number;
+  pointerPath: number;
+  directPath: number;
+  movementEfficiency: number | null;
+  trackingVisibleMs: number;
+  sessionActiveMs: number;
+  trackingAvailability: number;
+  actionAccuracy: number | null;
+  score: number | null;
+  updatedAtMs: number;
 };
 ```
 
----
+`actionAccuracy` is `null` until at least one required-action attempt exists. All percentages are clamped to `0..100`.
 
-# 15. Parallel Development Plan
+## 8. Missions and continuous performance tracking
 
-## Phase 1
+The MVP mission is data-driven: place the object tagged `red-ball` inside a target that accepts the tag `ball`.
 
-### Agent 1
-
-- Build main UI
-- Calibration
-- Environment selector
-- HUD
-- Results screen
-
-### Agent 2
-
-- Webcam
-- MediaPipe Hand
-- Tracking coordinates
-- Calibration
-- Mission/scoring state
-
-### Agent 3
-
-- Build first environment
-- Add multiple objects
-- Build mock-pointer grabbing
-- Build drop/place interaction
-
-## First integration milestone
+Mission states are:
 
 ```text
-Agent 2 hand coordinates
-↓
-Agent 3 open-world object interaction
-↓
-Agent 2 mission/scoring engine
-↓
-Agent 1 HUD/results
+available → active → completed
+                   ↘ abandoned
 ```
 
-This is the most important milestone.
+The world emits interaction events. A separate mission evaluator consumes those events and updates the mission and performance state. MediaPipe code must not update mission or UI state directly.
 
----
+### Required metrics
 
-# 16. 10-Hour Hackathon Build Order
+MotionForge continuously updates and displays:
+
+- Elapsed time
+- Successful required actions
+- Required-action attempts
+- Wrong-object grabs
+- Failed drops outside the intended target
+- Total errors
+- Movement efficiency
+- Tracking availability
+- Action accuracy
+- Mission completion status
+- A clearly labelled game score
+
+Definitions:
 
 ```text
-Project Setup
-↓
-Webcam
-↓
-Hand Tracking
-↓
-Coordinate Mapping
-↓
-One Open-World Room
-↓
-Multiple Objects
-↓
-Grab / Move / Drop
-↓
-One Optional Mission
-↓
-Scoring
-↓
-Results
-↓
-TEST MVP
-↓
-More Objects
-↓
-3D Polish
-↓
-Physics
-↓
-Pose Tracking
-↓
-Dashboard
-↓
-Deployment
+tracking availability = tracking visible time / active session time × 100
+
+action accuracy = successful required actions / required-action attempts × 100
+
+total errors = wrong-object grabs + failed drops
+
+movement efficiency = direct start-to-target distance / actual pointer path × 100
 ```
 
-If advanced functionality breaks the working prototype, remove it.
+A required-action attempt occurs when the user releases the required object, whether the release succeeds or fails. Free exploration with unrelated objects is logged but does not lower mission action accuracy, except that a wrong-object grab is reported separately.
 
----
+Movement distances use normalized interaction coordinates so they remain independent of screen resolution. Movement efficiency is calculated only while the required object is held, is capped at 100, and remains `null` until a valid path and target exist. It is a game-performance measure rather than a clinical measure. “Coordination” is not reported as a separate score in the MVP because the current sensors and design do not define or validate it.
 
-# 17. Feasibility
+For the hackathon, the optional game score may be:
 
-MotionForge is practical because:
+```text
+completion points = 500 when completed, otherwise 0
+accuracy points   = action accuracy × 3
+time bonus        = max(0, 200 - floor(elapsed seconds × 2))
+penalties         = wrong-object grabs × 20 + failed drops × 15
 
-- It runs directly in the browser.
-- Browser-side processing reduces server-side complexity.
-- Local webcam processing reduces latency.
-- Local processing improves privacy.
-- Open-source libraries and tools are available.
-- Standard laptop webcams can be used.
-- No dedicated AR headset is required.
+score = max(0, completion points + accuracy points + time bonus - penalties)
+```
 
----
+The score is a gameplay reward, not a medical or diagnostic measurement.
 
-# 18. Challenges
+### Continuous tracking behavior
 
-Expected challenges include:
+- Create a session when the playroom opens.
+- Update the snapshot at a limited UI frequency, such as 4–10 times per second.
+- Persist every semantic action accepted by the interaction engine, including hover, touch, grab, move, drop, and place events.
+- Persist the movement samples used by the interaction engine at a controlled rate, such as 10–15 samples per second, and whenever the pointer changes direction or crosses a meaningful distance threshold.
+- Record every mission/task start, completion, abandonment, restart, and final performance snapshot.
+- Pause active-time accumulation when the page is hidden or the session is paused.
+- Finalize a snapshot on mission completion, restart, or exit.
+- Never store webcam frames or video.
 
-- Poor lighting
-- Unclear background
-- Tracking instability
-- Camera quality differences
-- Depth estimation limitations
-- Complex 3D scenes reducing performance
-- Low-end device limitations
-- Webcam privacy concerns
-- Difficulty making free interaction reliable
+“Every movement” means every movement sample consumed by the interaction and metric pipeline, not every raw webcam frame or MediaPipe landmark frame. This keeps the recorded path consistent with the metrics while avoiding unnecessary storage and main-thread work.
 
----
+### Local persistence — MVP
 
-# 19. Risk Management
+The working laptop is the authoritative data store for the MVP. Tracking and results must continue to work without a network connection.
 
-Use:
+- Use browser-local **IndexedDB** for sessions, movement samples, interaction events, task records, and performance snapshots.
+- Use the `localStorage` API only for small values such as preferences, schema version, last active session ID, and recovery markers.
+- Batch IndexedDB writes off the render loop so persistence does not reduce camera or scene frame rate.
+- Flush pending records on mission completion, pause, restart, and page exit where the browser permits it.
+- Assign stable UUIDs to sessions and records to support later synchronization without duplication.
+- Retain a bounded configurable history and provide a clear local-data reset control.
+- Recover an interrupted session from its latest saved snapshot when possible.
 
-- Camera calibration
-- Lighting guidance
-- Simplified depth estimation
-- Constrained interaction zones
-- Lightweight 3D assets
-- Limited world size
-- Local webcam processing
-- Store performance metrics rather than webcam footage
-- Graceful fallback from complex physics to simpler interactions
+The results view may compare the current result with the previous equivalent task, personal best, and prior session history stored on the laptop. Comparisons must use the same mission, difficulty, calibration, metric schema, and application version.
 
----
+### Supabase persistence — post-MVP
 
-# 20. Required Resources
+Supabase is reserved for post-MVP storage, backup, cross-device history, and therapist/guardian dashboards. Local persistence remains available after Supabase is introduced.
 
-Main resources:
+The post-MVP synchronization layer should:
 
-- Laptops
-- Webcam
-- Browser
-- Internet for development/deployment
-- React/Next.js
-- MediaPipe
-- Three.js
-- React Three Fiber
-- Rapier
-- GLTF/GLB assets
-- GitHub
-- Vercel
-- Supabase if persistence is added
+- Upload finalized sessions, task records, interaction events, movement samples, and performance snapshots in batches.
+- Keep local records in an `unsynced`, `syncing`, `synced`, or `failed` state.
+- Retry safely using stable record IDs and idempotent upserts.
+- Resolve schema versions explicitly and never silently reinterpret older metrics.
+- Obtain appropriate consent before associating records with an account or uploading them.
+- Apply authentication, row-level security, data-retention rules, and least-privilege access.
+- Sync metrics and event data only; webcam images and video must never be uploaded.
 
----
+Supabase must be accessed through a storage repository interface rather than directly from tracking, interaction, mission, or UI components. This allows the MVP local repository and future Supabase repository to share the same application logic.
 
-# 21. Expected Impact & Beneficiaries
+## 9. Runtime architecture
 
-MotionForge aims to:
+```text
+Camera frame
+  → MediaPipe tracking adapter
+  → landmarks
+  → pointer and pinch classifier
+  → calibration and smoothing
+  → HandPointer
+  → interaction engine
+  → world state + InteractionEvent
+  → mission evaluator + performance accumulator
+  → local persistence repository
+  → live HUD + final results
+```
 
-- Help children practice motor coordination
-- Help practice movement planning
-- Make physical activity more engaging
-- Encourage repeated practice through gamification
-- Provide measurable performance feedback
-- Support children, parents, teachers and therapists
+The same interaction engine must accept a mouse pointer so world development and testing do not depend on a working webcam.
 
----
+## 10. Technology stack
 
-# 22. Expected Outcomes
+### MVP
 
-Potential outcomes:
+- **Build:** Vite
+- **UI:** React and TypeScript
+- **Tracking:** `@mediapipe/tasks-vision` Hand Landmarker
+- **Rendering:** React Three Fiber with an orthographic camera, or HTML Canvas if it proves more reliable on the demo hardware
+- **State:** React reducers for local state; Zustand only for genuinely shared cross-screen session state
+- **Styling:** Tailwind CSS or CSS Modules; select one during setup
+- **Logic tests:** Vitest
+- **Browser smoke tests:** Playwright when time permits
+- **Local MVP persistence:** IndexedDB for detailed records; `localStorage` for small preferences and recovery metadata
+- **Deployment:** Vercel, Netlify, or Cloudflare Pages over HTTPS
+- **Version control:** Git and GitHub
 
-- Better hand-eye coordination
-- Improved movement accuracy
-- Improved movement control
-- Better ability to perform sequential actions
-- Easier tracking of performance and progress
-- More engaging practice compared with static exercises
+React Three Fiber is used for presentation, not for full free-depth interaction. Next.js, Supabase, Recharts, Rapier, and Pose Landmarker are intentionally excluded from the MVP unless the core vertical slice is already stable.
 
----
+### Post-MVP
 
-# 23. Key Limitations
+- Rapier for selected gravity, bounce, and collision interactions
+- MediaPipe Pose Landmarker for missions that require torso or shoulder movement
+- Supabase for cloud backup, cross-device history, and authorized dashboards while retaining offline local storage
+- Recharts for comparable multi-session trends
+- Optimized GLB assets for richer environments
 
-- Tracking can be affected by background and camera quality.
-- Webcam-based systems have limited depth perception.
-- MotionForge is not a replacement for professional medical assessment.
-- Performance metrics should not be presented as clinical diagnosis.
-- Open-world interaction may initially support only a subset of object actions.
+## 11. Suggested project structure
 
----
+```text
+src/
+├── app/
+│   ├── App.tsx
+│   └── routes.tsx
+├── components/
+│   ├── calibration/
+│   ├── camera/
+│   ├── hud/
+│   ├── playroom/
+│   └── results/
+├── core/
+│   ├── contracts.ts
+│   ├── interaction/
+│   ├── missions/
+│   └── performance/
+├── tracking/
+│   ├── mediapipe/
+│   ├── calibration/
+│   └── smoothing/
+├── data/
+│   ├── objects.ts
+│   └── missions.ts
+├── state/
+├── storage/
+│   ├── local/
+│   └── repository.ts
+├── test/
+└── styles/
 
-# 24. Future Improvements
+public/
+└── assets/
+```
 
-- AI-based adaptive difficulty
-- More distinctive games and movement challenges
-- More open-world environments
-- Larger object libraries
-- Therapist/parent dashboard
-- Mobile support
-- Wearable-device integration
-- Better depth estimation
-- Personalized mission generation
-- Long-term progress tracking
+## 12. Implementation flow
 
----
+### Milestone 0 — Scope and contracts
 
-# 25. Definition of Done
+- Scaffold Vite, React, and TypeScript.
+- Add linting, formatting, and Vitest.
+- Commit the shared contracts.
+- Create a single deployed blank application.
 
-The hackathon prototype is successful if a judge can:
+### Milestone 1 — Risk spike
 
-1. Open MotionForge in a browser.
-2. Allow camera access.
-3. Calibrate their hand.
-4. Enter an environment.
-5. See several virtual objects.
-6. Freely choose an object.
-7. Grab and move it.
-8. Place/drop it.
-9. Complete at least one mission.
-10. Receive time, accuracy/error and score feedback.
+Prove this path on the actual demo laptop:
 
-The experience should feel like an **interactive open-world motor playground**, not a sequence of disconnected buttons or rigid mini-games.
+```text
+webcam → fingertip marker → stable pinch → drag one rectangle
+```
 
-# Core Principle
+Do not start visual polish or physics before this succeeds.
 
-**Build the interaction engine first. Build the world around it second.**
+### Milestone 2 — Parallel foundations
 
-The project should always maintain one reliable path:
+- Agent 1 builds navigation, permission/calibration UX, HUD, results, and error states.
+- Agent 2 builds webcam lifecycle, MediaPipe, calibration, smoothing, pinch classification, and debug output.
+- Agent 3 builds the data-driven 2.5D playroom, mouse adapter, object state machine, and hit testing.
 
-**Webcam → Tracking → Free Object Interaction → Mission → Measurement → Feedback**
+### Milestone 3 — First integration
+
+- Connect `HandPointer` to the interaction engine.
+- Emit `InteractionEvent` records.
+- Complete grab, move, drop, and place behavior.
+- Verify tracking-loss and restart behavior.
+
+### Milestone 4 — Mission and metrics
+
+- Add the red-ball mission.
+- Accumulate and display live metrics.
+- Finalize the results summary.
+- Persist movement samples, interaction events, task records, and summaries in IndexedDB.
+- Verify that history survives refresh and works offline.
+
+### Milestone 5 — Hardening and presentation
+
+- Test multiple lighting conditions and backgrounds.
+- Test both hands, permission denial, camera loss, slow devices, and HTTPS deployment.
+- Preserve the mouse fallback.
+- Add visual and audio rewards only after reliability testing.
+- Freeze features and rehearse the demo.
+
+## 13. Feasibility and risk controls
+
+The MVP is feasible on a standard webcam-equipped laptop because inference and interaction remain browser-side and the world is limited to a single 2.5D scene.
+
+Main risks and controls:
+
+| Risk | Control |
+|---|---|
+| Poor lighting or background contrast | Calibration guidance and visible confidence/debug state |
+| Noisy landmarks | Normalized pinch distance, hysteresis, and pointer smoothing |
+| Temporary tracking loss | Short grace period followed by safe release |
+| Inaccurate depth | Orthographic 2.5D interaction plane and large target zones |
+| Low-end device performance | One-hand tracking, limited inference rate, lightweight scene |
+| Camera privacy concerns | Local processing and no frame/video storage |
+| Camera permission failure | Clear recovery instructions and mouse fallback |
+| Late integration failure | Shared contracts, mock input, small frequent integrations |
+
+## 14. Definition of done
+
+The prototype is complete when the full MVP demonstration works reliably from the deployed URL on the demo laptop, the mission can be restarted without a refresh, the live and final metrics agree, detailed local history survives a refresh, offline recording works, and no webcam frames leave the browser.
+
+**Implementation principle:** Build the interaction engine first; build visual richness around a proven interaction second.
