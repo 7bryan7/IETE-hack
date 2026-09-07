@@ -8,7 +8,7 @@ import { SLIDES } from '../../data/content.js';
  * The active slide carries .is-active; the container background follows
  * the active slide's data-background, exactly like the original module.
  */
-export default function Carousel({ launched, activeId }) {
+export default function Carousel({ launched, activeId, onStartGame, onOpenFacts }) {
   const activeSlide = SLIDES.find((s) => s.id === activeId) || null;
   const backgroundColor = launched && activeSlide ? activeSlide.background : 'transparent';
 
@@ -26,7 +26,12 @@ export default function Carousel({ launched, activeId }) {
           <div className="c-home_carousel_slide_inner o-container">
             <div className="o-layout -gutter -middle">
               <div className="o-layout_item u-2/5@from-medium">
-                <SlideContent slide={slide} forceInview={activeId === slide.id} />
+                <SlideContent
+                  slide={slide}
+                  forceInview={activeId === slide.id}
+                  onStartGame={onStartGame}
+                  onOpenFacts={onOpenFacts}
+                />
               </div>
               <div className="o-layout_item u-3/5@from-medium u-relative" aria-hidden="true">
                 <span className="c-home_carousel_slide_drops">

@@ -19,7 +19,7 @@ const SUBMENUS = [
   },
 ];
 
-export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts, onOpenVideo }) {
+export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts, onStartGame }) {
   const [submenu, setSubmenu] = useState(null);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts, onO
             type="button"
             onClick={() => {
               onClose();
-              if (onOpenVideo) onOpenVideo();
+              if (onStartGame) onStartGame('menu');
             }}
           >
             <span>Playground</span>2.5D Motor
@@ -57,8 +57,8 @@ export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts, onO
             type="button"
             onClick={() => setSubmenu('c-menu-section-14')}
           >
-            <span>Explore</span>Playroom &
-            <br />Interaction
+            <span>Explore</span>Game Arena &
+            <br />Challenges
           </button>
         </li>
         <li className="c-nav_list_item">
@@ -134,13 +134,36 @@ export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts, onO
             <div className="c-nav_secondary_menu">
               <ul className="c-nav_secondary_menu_list">
                 {menu.links.map((link) => (
-                  <li key={link.href} className="c-nav_secondary_menu_list_item">
-                    <a href={link.href} onClick={onClose}>
-                      {link.label}
+                  <li key={link.label} className="c-nav_secondary_menu_list_item">
+                    <button
+                      type="button"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        width: '100%',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        font: 'inherit',
+                        color: 'inherit',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 0',
+                      }}
+                      onClick={() => {
+                        onClose();
+                        if (link.gameView && onStartGame) {
+                          onStartGame(link.gameView);
+                        } else if (onOpenFacts) {
+                          onOpenFacts();
+                        }
+                      }}
+                    >
+                      <span>{link.label}</span>
                       <span className="c-nav_secondary_menu_list_arrow">
                         <Icon id="i-arrow-long-right" />
                       </span>
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>

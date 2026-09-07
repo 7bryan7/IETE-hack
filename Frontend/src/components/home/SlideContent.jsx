@@ -6,7 +6,18 @@ import LiquidButton from '../LiquidButton.jsx';
  * Slide content block: split title + description + arrow CTA.
  * Used in the desktop carousel and the mobile accordion.
  */
-export default function SlideContent({ slide, forceInview }) {
+export default function SlideContent({ slide, forceInview, onStartGame, onOpenFacts }) {
+  const handleCtaClick = (e) => {
+    e.preventDefault();
+    if (slide.id === 'c-home-section-12' && onStartGame) {
+      onStartGame('menu');
+    } else if (slide.id === 'c-home-section-14' && onStartGame) {
+      onStartGame('calibration');
+    } else if (slide.id === 'c-home-section-16' && onOpenFacts) {
+      onOpenFacts();
+    }
+  };
+
   return (
     <>
       <SplitText
@@ -19,6 +30,7 @@ export default function SlideContent({ slide, forceInview }) {
       <LiquidButton
         className={`c-home_slide_button c-button-icon ${slide.ctaClass}`}
         color={slide.foreground}
+        onClick={handleCtaClick}
       >
         <a href={slide.cta.href} className="c-button-icon_label">
           {slide.cta.label}

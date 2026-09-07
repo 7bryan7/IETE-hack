@@ -9,20 +9,20 @@ import { SLIDES } from '../../data/content.js';
  * decide which buttons carry .is-active after a goto().
  */
 const NAV_BUTTONS = [
-  [{ label: 'Playroom', goto: 'c-home-section-12', id: null, cls: 'u-bg-green' }],
+  [{ label: 'Games', goto: 'c-home-section-12', id: null, cls: 'u-bg-green' }],
   [
-    { label: 'Tracking', goto: 'c-home-section-14', id: 'c-home-section-12', cls: 'u-bg-red' },
-    { label: 'Playroom', goto: 'c-home-section-12', id: 'c-home-section-16', cls: 'u-bg-green' },
-    { label: 'Feedback', goto: 'c-home-section-16', id: 'c-home-section-14', cls: 'u-bg-yellow' },
+    { label: 'Camera', goto: 'c-home-section-14', id: 'c-home-section-12', cls: 'u-bg-red' },
+    { label: 'Games', goto: 'c-home-section-12', id: 'c-home-section-16', cls: 'u-bg-green' },
+    { label: 'Transfer', goto: 'c-home-section-16', id: 'c-home-section-14', cls: 'u-bg-yellow' },
   ],
   [
-    { label: 'Feedback', goto: 'c-home-section-16', id: 'c-home-section-12', cls: 'u-bg-yellow' },
-    { label: 'Playroom', goto: 'c-home-section-12', id: 'c-home-section-14', cls: 'u-bg-green' },
-    { label: 'Tracking', goto: 'c-home-section-14', id: 'c-home-section-16', cls: 'u-bg-red' },
+    { label: 'Transfer', goto: 'c-home-section-16', id: 'c-home-section-12', cls: 'u-bg-yellow' },
+    { label: 'Games', goto: 'c-home-section-12', id: 'c-home-section-14', cls: 'u-bg-green' },
+    { label: 'Camera', goto: 'c-home-section-14', id: 'c-home-section-16', cls: 'u-bg-red' },
   ],
 ];
 
-function AccordionContent({ slide, open, forceInview }) {
+function AccordionContent({ slide, open, forceInview, onStartGame, onOpenFacts }) {
   return (
     <div className={`c-accordion_content ${slide.contentClass}${open ? ' is-open' : ''}`}>
       <div className="c-accordion_content_inner">
@@ -31,7 +31,12 @@ function AccordionContent({ slide, open, forceInview }) {
             <img role="presentation" className="c-home_slide_image" src={slide.imageDark} alt="" />
           </div>
           <div className="c-home_nav_accordion_inner_content">
-            <SlideContent slide={slide} forceInview={forceInview} />
+            <SlideContent
+              slide={slide}
+              forceInview={forceInview}
+              onStartGame={onStartGame}
+              onOpenFacts={onOpenFacts}
+            />
           </div>
         </div>
       </div>
@@ -45,7 +50,15 @@ function AccordionContent({ slide, open, forceInview }) {
  *  - button click: launch (first time) then goto(target)
  *  - titles area click: close (back to hero)
  */
-export default function NavStrip({ launched, activeId, openId, onButtonClick, onTitlesClick }) {
+export default function NavStrip({
+  launched,
+  activeId,
+  openId,
+  onButtonClick,
+  onTitlesClick,
+  onStartGame,
+  onOpenFacts,
+}) {
   return (
     <nav className="c-home_nav">
       <div
@@ -86,7 +99,13 @@ export default function NavStrip({ launched, activeId, openId, onButtonClick, on
                   <span className="c-home_nav_list_button_label">{button.label}</span>
                 </button>
               ))}
-              <AccordionContent slide={slide} open={isOpen} forceInview={isOpen} />
+              <AccordionContent
+                slide={slide}
+                open={isOpen}
+                forceInview={isOpen}
+                onStartGame={onStartGame}
+                onOpenFacts={onOpenFacts}
+              />
             </li>
           );
         })}

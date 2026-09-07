@@ -13,7 +13,7 @@ import { SLIDES } from '../../data/content.js';
  *    data-id matches; carousel background follows the target slide
  *  - clicking the titles area closes the carousel (back to hero)
  */
-export default function HomeNav({ homeRef }) {
+export default function HomeNav({ homeRef, onStartGame, onOpenFacts }) {
   const [launched, setLaunched] = useState(false);
   const [activeId, setActiveId] = useState(SLIDES[0].id);
   const [openId, setOpenId] = useState(null); // mobile accordion
@@ -65,8 +65,15 @@ export default function HomeNav({ homeRef }) {
         openId={openId}
         onButtonClick={handleButtonClick}
         onTitlesClick={handleTitlesClick}
+        onStartGame={onStartGame}
+        onOpenFacts={onOpenFacts}
       />
-      <Carousel launched={launched} activeId={activeId} />
+      <Carousel
+        launched={launched}
+        activeId={activeId}
+        onStartGame={onStartGame}
+        onOpenFacts={onOpenFacts}
+      />
     </>
   );
 }
