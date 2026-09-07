@@ -1,32 +1,24 @@
-<div align="center">
+<p align="center">
+  <img src="assets/banner.svg" alt="MotionForge — A browser-based, webcam-controlled 2.5D motor-practice playground" width="100%"/>
+</p>
 
-<!-- ================= HERO BANNER ================= -->
-<div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 20px; padding: 44px 32px; margin: 24px 0 32px; box-shadow: 0 12px 32px rgba(30, 60, 114, 0.35);">
+<p align="center">
+  <b>Move your hand. Grab virtual objects. Complete missions. Get real feedback.</b>
+</p>
 
-<p style="margin: 0 0 14px; font-size: 0.85em; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #9fd8e8;">IETE Hackathon · Healthcare &amp; Assistive Technology</p>
-
-<h1 style="margin: 0; font-size: 3.4em; font-weight: 800; letter-spacing: 2px; color: #ffffff; line-height: 1.15; border-bottom: none;">MotionForge</h1>
-
-<hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.25); width: 55%; margin: 18px auto;">
-
-<p style="margin: 0; font-size: 1.25em; font-weight: 400; color: #eaf4fb; letter-spacing: 0.5px;">A browser-based, webcam-controlled 2.5D motor-practice playground</p>
-
-</div>
-
-<!-- ================= BADGES ================= -->
-[![Hackathon](https://img.shields.io/badge/Hackathon-IETE-blueviolet?style=for-the-badge&logo=github)](https://github.com/7bryan7/IETE-hack)
-[![Team](https://img.shields.io/badge/Team-Bug%20Eaters-ff6b6b?style=for-the-badge)](#)
-[![Domain](https://img.shields.io/badge/Domain-Healthcare%20%26%20Assistive%20Tech-4ecdc4?style=for-the-badge)](#)
-[![Type](https://img.shields.io/badge/Type-Browser%20Software-45b7d1?style=for-the-badge)](#)
-[![Stack](https://img.shields.io/badge/Stack-React%20%7C%20TS%20%7C%20MediaPipe-f7d794?style=for-the-badge)](#)
-
-<br>
-
-**Move your hand. Grab virtual objects. Complete missions. Get real feedback.**
-
-<br>
-
-</div>
+<p align="center">
+  <a href="https://github.com/7bryan7/IETE-hack"><img src="https://img.shields.io/badge/IETE%20Hackathon-2026-8B5CF6?style=flat-square" alt="IETE Hackathon"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Team-Bug%20Eaters-FF6B6B?style=flat-square" alt="Team Bug Eaters"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Domain-Healthcare%20%26%20Assistive%20Tech-4ECDC4?style=flat-square" alt="Healthcare & Assistive Tech"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Type-Browser%20Software-45B7D1?style=flat-square" alt="Browser Software"/></a>
+  <br/>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white&style=flat-square" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black&style=flat-square" alt="React"/>
+  <img src="https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white&style=flat-square" alt="Vite"/>
+  <img src="https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white&style=flat-square" alt="Vitest"/>
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=white&style=flat-square" alt="Tailwind CSS"/>
+  <img src="https://img.shields.io/badge/MediaPipe-0097A7?style=flat-square" alt="MediaPipe"/>
+</p>
 
 ---
 
