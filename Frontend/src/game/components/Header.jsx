@@ -20,44 +20,47 @@ export default function Header({
     <header className="game-header">
       <div className="header-brand" onClick={onExitToLanding || onHomeClick} title="Exit to Landing Page" style={{ cursor: 'pointer' }}>
         <span className="brand-logo">🖐️</span>
-        <span className="brand-title">MotionForge</span>
-        {gameTitle && <span className="game-title-tag">| {gameTitle}</span>}
+        <span className="brand-title">
+          MOTION<span className="brand-title-accent">FORGE</span>
+        </span>
+        {gameTitle && <span className="game-title-tag">🎮 {gameTitle}</span>}
       </div>
 
       <div className="header-stats">
         <div className="stat-pill timer" title="Elapsed Time">
-          <Clock size={18} className="stat-icon" />
+          <Clock size={16} className="stat-icon" />
           <span>{formatTime(elapsedTime)}</span>
         </div>
 
         <div className="stat-pill score" title="Current Score">
-          <Zap size={18} className="stat-icon" />
+          <Zap size={16} className="stat-icon" />
           <span>{score} pts</span>
         </div>
 
         <div className="stat-pill errors" title="Errors / Misses">
-          <AlertTriangle size={18} className="stat-icon" />
+          <AlertTriangle size={16} className="stat-icon" />
           <span>{errors} err</span>
         </div>
 
         <div className={`stat-pill difficulty ${difficulty.toLowerCase()}`}>
-          <ShieldCheck size={16} />
+          <ShieldCheck size={15} />
           <span>{difficulty}</span>
         </div>
       </div>
 
-      <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <button className="btn-icon" onClick={onHomeClick} title="Back to Game Menu">
-          <Home size={20} />
+          <Home size={18} />
         </button>
         {onExitToLanding && (
           <button
+            type="button"
             className="btn btn-secondary"
-            style={{ padding: '6px 12px', fontSize: '13px', borderRadius: '8px' }}
+            style={{ padding: '7px 14px', fontSize: '13px', borderRadius: '9999px', fontWeight: 700 }}
             onClick={onExitToLanding}
             title="Exit to Landing Page"
           >
-            Exit to Home
+            ← Exit to Home
           </button>
         )}
       </div>

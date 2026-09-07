@@ -144,14 +144,14 @@ export default function SequenceGame({ videoRef, difficulty = 'Medium', onHome, 
     ctx.save();
     ctx.beginPath();
     ctx.arc(gx, gy, gr, 0, Math.PI * 2);
-    ctx.fillStyle = currentStepIdx === 4 ? 'rgba(245, 158, 11, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+    ctx.fillStyle = currentStepIdx === 4 ? 'rgba(234, 159, 14, 0.3)' : 'rgba(255, 255, 255, 0.12)';
     ctx.fill();
     ctx.lineWidth = currentStepIdx === 4 ? 4 : 2;
-    ctx.strokeStyle = currentStepIdx === 4 ? '#f59e0b' : '#6b7280';
+    ctx.strokeStyle = currentStepIdx === 4 ? '#EA9F0E' : '#EAD8C7';
     ctx.stroke();
 
-    ctx.font = 'bold 15px "Fredoka", sans-serif';
-    ctx.fillStyle = currentStepIdx === 4 ? '#f59e0b' : '#9ca3af';
+    ctx.font = 'bold 15px "Montserrat", sans-serif';
+    ctx.fillStyle = currentStepIdx === 4 ? '#EA9F0E' : '#8C847E';
     ctx.textAlign = 'center';
     ctx.fillText('TARGET 🎯', gx, gy + 5);
     ctx.restore();
@@ -169,11 +169,6 @@ export default function SequenceGame({ videoRef, difficulty = 'Medium', onHome, 
       } else if (obj.isHeldBy === 'Left' && leftHand && leftHand.isPinching && leftHand.pinchMidpoint) {
         obj.x = leftHand.pinchMidpoint.x;
         obj.y = leftHand.pinchMidpoint.y;
-      } else if (obj.isHeldBy) {
-        // Pinch lost mid sequence check
-        if (currentStepIdx < 4) {
-          // Keep object at current position unless dropped during drop step
-        }
       }
 
       // Evaluate Current Step Completion Criteria:
@@ -193,25 +188,26 @@ export default function SequenceGame({ videoRef, difficulty = 'Medium', onHome, 
         }
       } else if (currentStepIdx === 2) {
         // STEP 3: Transfer to Left hand
-        if (rightHand && leftHand && rightHand.pinchMidpoint && leftHand.pinchMidpoint) {
-          const distHands = getDistance(rightHand.pinchMidpoint, leftHand.pinchMidpoint);
-          if (distHands < 0.14 && leftHand.isPinching) {
+        if (leftHand && leftHand.isPinching && leftHand.pinchMidpoint) {
+          const dist = getDistance(leftHand.pinchMidpoint, { x: obj.x, y: obj.y });
+          if (dist < 0.14) {
             obj.isHeldBy = 'Left';
             sound.playTransfer();
             advanceStep();
           }
         }
       } else if (currentStepIdx === 3) {
-        // STEP 4: Move Upward (y < 0.3)
+        // STEP 4: Move upward (y < 0.3)
         if (obj.y <= 0.3) {
           advanceStep();
         }
       } else if (currentStepIdx === 4) {
-        // STEP 5: Drop inside Target Goal
-        const distGoal = getDistance({ x: obj.x, y: obj.y }, goal);
-        // Check if released pinch inside goal
-        const currentHeldHand = obj.isHeldBy === 'Right' ? rightHand : leftHand;
-        if (currentHeldHand && !currentHeldHand.isPinching && distGoal <= goal.radius) {
+        // STEP 5: Drop inside target zone
+        const distToGoal = getDistance({ x: obj.x, y: obj.y }, goal);
+        const isPinchingLeft = leftHand && leftHand.isPinching;
+
+        // Trigger on pinch release inside goal zone
+        if (distToGoal < goal.radius && !isPinchingLeft) {
           obj.isHeldBy = null;
           advanceStep();
         }
@@ -226,10 +222,10 @@ export default function SequenceGame({ videoRef, difficulty = 'Medium', onHome, 
     ctx.save();
     ctx.beginPath();
     ctx.arc(bx, by, br, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
+    ctx.fillStyle = 'rgba(2, 174, 144, 0.35)';
     ctx.fill();
     ctx.lineWidth = 4;
-    ctx.strokeStyle = '#38bdf8';
+    ctx.strokeStyle = '#02AE90';
     ctx.stroke();
 
     ctx.font = `${Math.round(br * 1.2)}px sans-serif`;

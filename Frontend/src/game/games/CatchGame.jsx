@@ -10,10 +10,10 @@ import { calculateAccuracy, calculateCoordinationScore } from '../utils/scoring'
 import { sound } from '../utils/sound';
 
 const OBJECT_TYPES = [
-  { type: 'star', emoji: '⭐', label: 'Golden Star', color: '#f59e0b' },
-  { type: 'ball', emoji: '⚽', label: 'Soccer Ball', color: '#38bdf8' },
-  { type: 'fruit', emoji: '🍓', label: 'Strawberry', color: '#ef4444' },
-  { type: 'bubble', emoji: '🫧', label: 'Magic Bubble', color: '#a855f7' }
+  { type: 'star', emoji: '⭐', label: 'Golden Star', color: '#EA9F0E' },
+  { type: 'ball', emoji: '⚽', label: 'Playful Ball', color: '#02AE90' },
+  { type: 'fruit', emoji: '🍓', label: 'Sweet Strawberry', color: '#FF7673' },
+  { type: 'bubble', emoji: '🫧', label: 'Magic Bubble', color: '#EA9F0E' }
 ];
 
 export default function CatchGame({ videoRef, difficulty = 'Medium', onHome, onNextGame, onExitToLanding }) {
@@ -139,15 +139,15 @@ export default function CatchGame({ videoRef, difficulty = 'Medium', onHome, onN
     ctx.save();
     ctx.beginPath();
     ctx.arc(dzX, dzY, dzR, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+    ctx.fillStyle = 'rgba(2, 174, 144, 0.22)';
     ctx.fill();
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 3.5;
     ctx.setLineDash([8, 6]);
-    ctx.strokeStyle = '#10b981';
+    ctx.strokeStyle = '#02AE90';
     ctx.stroke();
 
-    ctx.font = 'bold 16px "Fredoka", sans-serif';
-    ctx.fillStyle = '#10b981';
+    ctx.font = 'bold 16px "Montserrat", sans-serif';
+    ctx.fillStyle = '#02AE90';
     ctx.textAlign = 'center';
     ctx.fillText('DROP ZONE 🧺', dzX, dzY + 5);
     ctx.restore();

@@ -116,15 +116,15 @@ export default function TransferGame({ videoRef, difficulty = 'Medium', onHome, 
     ctx.save();
     ctx.beginPath();
     ctx.arc(gx, gy, gr, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+    ctx.fillStyle = 'rgba(234, 159, 14, 0.18)';
     ctx.fill();
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 3.5;
     ctx.setLineDash([6, 6]);
-    ctx.strokeStyle = '#38bdf8';
+    ctx.strokeStyle = '#EA9F0E';
     ctx.stroke();
 
-    ctx.font = 'bold 15px "Fredoka", sans-serif';
-    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 15px "Montserrat", sans-serif';
+    ctx.fillStyle = '#EA9F0E';
     ctx.textAlign = 'center';
     ctx.fillText(`TARGET ZONE 🎯`, gx, gy + 5);
     ctx.restore();

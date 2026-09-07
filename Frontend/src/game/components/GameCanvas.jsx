@@ -43,7 +43,7 @@ export default function GameCanvas({
 
       // 1. Draw fingertip trails
       if (trailPoints && trailPoints.length > 0) {
-        drawTrail(ctx, trailPoints, width, height, 'rgba(56, 189, 248, 0.75)');
+        drawTrail(ctx, trailPoints, width, height, 'rgba(2, 174, 144, 0.8)');
       }
 
       // 2. Custom Game Elements Render Callback (targets, balls, drop zones, step prompts)
@@ -57,9 +57,9 @@ export default function GameCanvas({
         trackingData.hands.forEach(hand => {
           const { landmarks, handedness, isPinching, indexTip, thumbTip } = hand;
           const isRight = handedness === 'Right';
-          const primaryColor = isRight ? '#38bdf8' : '#c084fc'; // Cyan for Right hand, Purple for Left hand
-          const primaryGlow = isRight ? 'rgba(56, 189, 248, 0.5)' : 'rgba(192, 132, 252, 0.5)';
-          const accentColor = isPinching ? '#fbbf24' : '#34d399'; // Amber if pinching, Emerald if open
+          const primaryColor = isRight ? '#02AE90' : '#FF7673'; // Mint for Right hand, Coral for Left hand
+          const primaryGlow = isRight ? 'rgba(2, 174, 144, 0.55)' : 'rgba(255, 118, 115, 0.55)';
+          const accentColor = isPinching ? '#EA9F0E' : '#02AE90'; // Amber if pinching, Mint if open
 
           // Draw skeleton lines with glow effect
           ctx.save();

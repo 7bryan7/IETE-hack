@@ -7,6 +7,18 @@ export default function Instructions({ title, steps, emoji = '🎯', onStart }) 
       <div className="instructions-card animate-pop">
         <div className="instructions-header">
           <span className="inst-emoji">{emoji}</span>
+          <div style={{
+            fontFamily: 'Montserrat, sans-serif',
+            fontWeight: 800,
+            fontSize: '0.78rem',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: '#EA9F0E',
+            marginTop: '8px',
+            marginBottom: '2px'
+          }}>
+            Mission Briefing
+          </div>
           <h2>{title}</h2>
           <p className="inst-sub">Read instructions below and start when ready!</p>
         </div>

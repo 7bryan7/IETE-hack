@@ -43,14 +43,25 @@ export default function Calibration({ videoRef, onCalibrationComplete, onSkip, o
           <button
             type="button"
             className="btn btn-secondary"
-            style={{ marginBottom: '12px' }}
+            style={{ marginBottom: '14px', alignSelf: 'center', padding: '8px 18px', fontSize: '13px' }}
             onClick={onBackToLanding}
           >
             ← Back to Landing Page
           </button>
         )}
+        <div style={{
+          fontFamily: 'Montserrat, sans-serif',
+          fontWeight: 800,
+          fontSize: '0.82rem',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: '#EA9F0E',
+          marginBottom: '0.5rem'
+        }}>
+          Webcam Vision Setup
+        </div>
         <h2>Camera & Hand Setup 🖐️🖐️</h2>
-        <p>Get ready for MotionForge by calibrating your hands!</p>
+        <p>Ensure both hands are visible in the camera frame to calibrate tracking.</p>
       </div>
 
       <div className="calibration-view-wrapper">
@@ -61,24 +72,24 @@ export default function Calibration({ videoRef, onCalibrationComplete, onSkip, o
           {!isLoaded ? (
             <div className="calib-status loading">
               <div className="spinner"></div>
-              <span>Loading AI Vision Model...</span>
+              <span>Connecting AI Vision Model...</span>
             </div>
           ) : bothHandsDetected ? (
             <div className="calib-status ready animate-bounce">
-              <CheckCircle2 size={42} className="text-emerald" />
+              <CheckCircle2 size={38} style={{ color: '#02AE90' }} />
               <div>
-                <h3>Ready! ✅</h3>
-                <p>Both hands tracked successfully!</p>
+                <h3>Hands Ready! ✅</h3>
+                <p>Both hands detected and calibrated successfully!</p>
               </div>
             </div>
           ) : (
             <div className="calib-status prompt">
-              <Hand size={36} className="text-cyan icon-pulse" />
+              <Hand size={36} style={{ color: '#EA9F0E' }} className="icon-pulse" />
               <div>
                 <h3>Raise Both Hands</h3>
-                <p>Ensure upper body and both hands are clearly visible in the camera frame.</p>
+                <p>Position your hands in front of the camera.</p>
                 <div className="hand-badge-status">
-                  Hands Detected: <strong className={handCount > 0 ? 'text-cyan' : 'text-amber'}>{handCount} / 2</strong>
+                  Hands Detected: <strong style={{ color: handCount > 0 ? '#02AE90' : '#EA9F0E', fontSize: '15px' }}>{handCount} / 2</strong>
                 </div>
               </div>
             </div>

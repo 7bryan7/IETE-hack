@@ -8,36 +8,36 @@ export default function GameMenu({ onSelectGame, difficulty, setDifficulty, onBa
       name: 'Reach Challenge',
       icon: Target,
       emoji: '🎯',
-      color: 'cyan',
+      color: 'green',
       description: 'Touch circular targets as fast as you can using your index fingertip!',
-      badge: 'Game 1'
+      badge: 'Game 1 • Speed'
     },
     {
       id: 'catch',
       name: 'Catch Challenge',
       icon: Hand,
       emoji: '🖐️',
-      color: 'purple',
+      color: 'coral',
       description: 'Pinch your thumb & finger together to grab stars, fruits, and bubbles!',
-      badge: 'Game 2'
+      badge: 'Game 2 • Pinch'
     },
     {
       id: 'transfer',
       name: 'Hand Transfer',
       icon: ArrowRightLeft,
       emoji: '🔄',
-      color: 'emerald',
+      color: 'yellow',
       description: 'Pick up an object with one hand and pass it over to your other hand!',
-      badge: 'Game 3 • Core'
+      badge: 'Game 3 • Bimanual'
     },
     {
       id: 'sequence',
       name: 'Sequence Challenge',
       icon: Puzzle,
       emoji: '🧩',
-      color: 'amber',
+      color: 'purple',
       description: 'Follow multi-step movement orders to test your spatial motor planning!',
-      badge: 'Game 4'
+      badge: 'Game 4 • Planning'
     }
   ];
 
@@ -48,14 +48,27 @@ export default function GameMenu({ onSelectGame, difficulty, setDifficulty, onBa
           <button
             type="button"
             className="btn btn-secondary"
-            style={{ marginBottom: '14px', alignSelf: 'center' }}
+            style={{ marginBottom: '16px', alignSelf: 'center', padding: '8px 18px', fontSize: '13px' }}
             onClick={onBackToLanding}
           >
             ← Back to Landing Page
           </button>
         )}
-        <h1 className="menu-title">MotionForge 🖐️</h1>
-        <p className="menu-subtitle">Play • Move • Improve</p>
+        <div style={{
+          fontFamily: 'Montserrat, sans-serif',
+          fontWeight: 800,
+          fontSize: '0.82rem',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: '#EA9F0E',
+          marginBottom: '0.5rem'
+        }}>
+          Play & Practice Arena
+        </div>
+        <h1 className="menu-title">
+          Motion<span style={{ color: '#02AE90' }}>Forge</span> 🖐️
+        </h1>
+        <p className="menu-subtitle">Move Your Hands • Master Motor Skills • Have Fun!</p>
       </div>
 
       {/* Difficulty selector bar */}

@@ -96,24 +96,29 @@ export default function ReachGame({ videoRef, difficulty = 'Medium', onHome, onN
     const ty = target.y * height;
     const r = target.radiusPx;
 
-    // Draw glowing pulsing target circle
+    // Draw glowing pulsing target circle in Maple theme colors
     ctx.save();
     ctx.beginPath();
     ctx.arc(tx, ty, r + 8, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+    ctx.fillStyle = 'rgba(2, 174, 144, 0.25)';
     ctx.fill();
 
     ctx.beginPath();
     ctx.arc(tx, ty, r, 0, Math.PI * 2);
-    ctx.fillStyle = '#38bdf8';
+    ctx.fillStyle = '#02AE90';
     ctx.fill();
     ctx.lineWidth = 4;
     ctx.strokeStyle = '#ffffff';
     ctx.stroke();
 
-    // Target bullseye inner ring
+    // Target bullseye inner rings (Amber & White)
     ctx.beginPath();
-    ctx.arc(tx, ty, r * 0.4, 0, Math.PI * 2);
+    ctx.arc(tx, ty, r * 0.55, 0, Math.PI * 2);
+    ctx.fillStyle = '#EA9F0E';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(tx, ty, r * 0.25, 0, Math.PI * 2);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
     ctx.restore();
