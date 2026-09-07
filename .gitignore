@@ -1,0 +1,5 @@
+# OpenWork private data (session attachments, local state)
+.opencode/
+
+# Local dev artifacts
+dev-server.log

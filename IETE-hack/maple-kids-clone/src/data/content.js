@@ -1,0 +1,120 @@
+export const FACTS = [
+  'The sugar maple tree has existed in North America for more than 4,500 years.',
+  'Maple syrup is made from the sap of sugar maple trees.',
+  'Maple products are exported to more than 60 countries around the world.',
+  'In 2013, Canadian astronaut Chris Hadfield ate maple syrup in space',
+  'Every spring, the sugaring season lasts for about 20 days.',
+  'Quebec produces over 72% of all the maple syrup in the world.',
+  'Quebec maple syrup comes from 34 billion maple trees.',
+  'In 1536, Jacques Cartier and his crew became the first Europeans to taste maple sap.',
+  'In summertime, sugars are created through the process of photosynthesis in the leaves of the sugar maple',
+  'Maple syrup producers often work day and night to collect the maple sap and turn it into maple syrup.',
+  'The sugar maple and red maple are two tree species with the ability to convert starch to sugar.',
+  'Maple sap contains 46 molecules vital to the life of the tree.',
+  "Each year, maple forests capture an amount of carbon equivalent to what's produced by 290,000 cars.",
+  'North America has 13 maple tree species, including the sugar maple.',
+  'It has to freeze at night and thaw during the day for the maple sap to flow',
+  'In about 1676, our ancestors, the First Nations people, were the first to boil maple sap, using iron pots.',
+  'Maple syrup from Quebec is pure and 100% natural.',
+  "In the sugar shack, the maple syrup producer uses an evaporator to heat maple sap to a temperature of 103.5° C.",
+  'It takes an average of 40 litres of maple sap to make one litre of maple syrup.',
+];
+
+export const PUPILS_LINKS = [
+  { label: 'The Four Seasons', href: 'https://kids.maplefromcanada.ca/learn/seasons/' },
+  { label: 'The Ecosystem, the Fauna, the Flora', href: 'https://kids.maplefromcanada.ca/learn/ecosystem/' },
+  { label: 'The History of Maple Syrup', href: 'https://kids.maplefromcanada.ca/learn/history/' },
+  { label: 'Health and Sports', href: 'https://kids.maplefromcanada.ca/learn/health-sports/' },
+  { label: 'The Maple Producer', href: 'https://kids.maplefromcanada.ca/learn/producer/' },
+  { label: 'The Production of Maple Syrup', href: 'https://kids.maplefromcanada.ca/learn/production/' },
+  { label: 'The Stages of Maple', href: 'https://kids.maplefromcanada.ca/learn/the-stages-of-maple/' },
+  { label: 'The Chemistery of Maple', href: 'https://kids.maplefromcanada.ca/learn/the-chemistery-of-maple/' },
+];
+
+export const CHEFS_LINKS = [
+  { label: 'All recipes', href: 'https://kids.maplefromcanada.ca/cook/recipes/' },
+  { label: 'Drink', href: 'https://kids.maplefromcanada.ca/cook/drink/' },
+  { label: 'Foods', href: 'https://kids.maplefromcanada.ca/cook/foods/' },
+  { label: 'Snacks', href: 'https://kids.maplefromcanada.ca/cook/snacks/' },
+  { label: 'Sweets', href: 'https://kids.maplefromcanada.ca/cook/sweets/' },
+  { label: 'Family Fun', href: 'https://kids.maplefromcanada.ca/cook/family/' },
+];
+
+export const SLIDES = [
+  {
+    id: 'c-home-section-12',
+    label: 'Educators',
+    eyebrow: 'Educators',
+    title: 'Educational Kit',
+    content: 'Tools to guide you through a complete learning module on maple.',
+    cta: { label: 'Teachers Section', href: 'https://kids.maplefromcanada.ca/teach/' },
+    buttonClass: 'u-bg-green',
+    contentClass: 'u-bg-green',
+    ctaClass: '-green-light',
+    image: 'assets/home_carousel_green.svg',
+    imageDark: 'assets/home_carousel_green_d.svg',
+    background: '#02AE90',
+    foreground: '#029C82',
+    drops: [
+      { style: { bottom: '15%', right: '25%', width: '90px' }, front: false },
+      { style: { bottom: '5%', right: '45%', width: '45px' }, front: true },
+      { style: { top: '25%', right: '32%', width: '40px' }, front: true },
+      { style: { top: '28%', right: '25%', width: '26px' }, front: true },
+    ],
+  },
+  {
+    id: 'c-home-section-14',
+    label: 'Pupils',
+    eyebrow: 'Pupils',
+    title: 'The Encyclopedia of Maple',
+    content: 'A complete reference to the history of maple.',
+    cta: { label: 'Learn', href: 'https://kids.maplefromcanada.ca/learn/' },
+    buttonClass: 'u-bg-red',
+    contentClass: 'u-bg-red',
+    ctaClass: '-red-light',
+    image: 'assets/home_carousel_red.svg',
+    imageDark: 'assets/home_carousel_red_d.svg',
+    background: '#FF7673',
+    foreground: '#FA6562',
+    drops: [
+      { style: { bottom: '15%', right: '25%', width: '110px' }, front: false },
+      { style: { bottom: '5%', right: '45%', width: '45px' }, front: true },
+      { style: { top: '15%', right: '40%', width: '60px' }, front: true },
+      { style: { top: '10%', right: '50%', width: '26px' }, front: true },
+    ],
+  },
+  {
+    id: 'c-home-section-16',
+    label: 'Junior Chefs',
+    eyebrow: 'Junior Chefs',
+    title: 'Recipes for Kids',
+    content: 'What will we make today? More than 200 recipes for beginners and junior chefs to try!',
+    cta: { label: 'Our Recipes', href: 'https://kids.maplefromcanada.ca/cook/' },
+    buttonClass: 'u-bg-yellow',
+    contentClass: 'u-bg-yellow',
+    ctaClass: '-yellow-light',
+    image: 'assets/home_carousel_yellow.svg',
+    imageDark: 'assets/home_carousel_yellow_d.svg',
+    background: '#EFB700',
+    foreground: '#EA9F0E',
+    drops: [
+      { style: { bottom: '12%', right: '18%', width: '70px' }, front: false, dark: true },
+      { style: { top: '30%', left: '3%', width: '55px' }, front: false, dark: true },
+      { style: { top: '25%', right: '32%', width: '40px' }, front: true, dark: true },
+      { style: { top: '28%', right: '25%', width: '26px' }, front: true, dark: true },
+    ],
+  },
+];
+
+export const HERO_DROPS = [
+  { style: { top: '15%', left: '15%', width: '60px' }, delay: '1.14s', rotate: '215deg' },
+  { style: { top: '30%', left: '20%', width: '25px' }, delay: '2.62s', rotate: '-131deg' },
+  { style: { top: '45%', left: '5%', width: '95px' }, delay: '2.84s', rotate: '-200deg' },
+  { style: { top: '48%', right: '18%', width: '18px' }, delay: '1.77s', rotate: '-137deg' },
+  { style: { top: '25%', right: '25%', width: '18px' }, delay: '1.17s', rotate: '-153deg' },
+  { style: { top: '42%', right: '5%', width: '40px' }, delay: '1.77s', rotate: '-298deg' },
+  { style: { top: '35%', right: '10%', width: '30px' }, delay: '1.83s', rotate: '96deg' },
+];
+
+export const VIDEO_EMBED_HTML =
+  '<iframe title="Learning About Maple Syrup" width="200" height="113" src="https://www.youtube.com/embed/jGQu3MikEeE?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
