@@ -3,13 +3,13 @@ import { goalFor } from './objectLevels.js';
 import { sourceFor, otherHand, dualTargets } from './bilateralLevels.js';
 import { pathFor, sequenceFor, sequenceTargets } from './planningLevels.js';
 import { movingTargets, questPath, activationTargets, finalTarget } from './questLevels.js';
-export function circle(ctx, p, radius, label, color = '#38bdf8') {
+export function circle(ctx, p, radius, label, color = '#02ae90') {
   ctx.beginPath(); ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
   ctx.fillStyle = `${color}44`; ctx.fill(); ctx.strokeStyle = color; ctx.lineWidth = 5; ctx.stroke();
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 23px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, p.x, p.y);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 23px Montserrat, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, p.x, p.y);
 }
 export function renderLevel(ctx, s) {
-  if(s.id===9) { movingTargets(s).forEach((p,i)=>circle(ctx,p,s.config.radius,i?'RIGHT':'LEFT',i?'#38bdf8':'#c084fc'));return; }
+  if(s.id===9) { movingTargets(s).forEach((p,i)=>circle(ctx,p,s.config.radius,i?'RIGHT':'LEFT',i?'#02ae90':'#ff7673'));return; }
   if(s.id===10) {
     const stage=s.quest||'REACH';
     if(stage==='REACH')circle(ctx,targetFor(s),s.config.radius,'RIGHT');
@@ -17,20 +17,20 @@ export function renderLevel(ctx, s) {
       if(stage==='PATH')drawPath(ctx,s,questPath);
       if(stage==='DUAL_HAND' || stage==='RECOVER_DUAL')activationTargets.forEach((p,i)=>circle(ctx,p,s.config.radius,i?'RIGHT':'LEFT'));
       if(stage==='DROP')circle(ctx,finalTarget,s.config.radius,'NOVA');
-      circle(ctx,s.object,30,'◆','#fbbf24');
+      circle(ctx,s.object,30,'◆','#efb700');
     }
     return;
   }
   if (s.id === 7) { drawPath(ctx,s,pathFor(s)); return; }
   if (s.id === 8) {
-    sequenceTargets.forEach((p,i)=>circle(ctx,p,s.config.radius,String(i+1),['#fb7185','#38bdf8','#34d399'][i]));
-    if(s.phase === 'SHOW_SEQUENCE') { ctx.fillStyle='#101c30';ctx.fillRect(100,490,800,75);ctx.fillStyle='#fff';ctx.font='bold 22px sans-serif';ctx.textAlign='center';ctx.fillText(sequenceFor(s).map(step=>`${step.target+1} (${step.hand || 'either'})`).join(' → '),500,530); }
+    sequenceTargets.forEach((p,i)=>circle(ctx,p,s.config.radius,String(i+1),['#ff7673','#02ae90','#efb700'][i]));
+    if(s.phase === 'SHOW_SEQUENCE') { ctx.fillStyle='#2a2b2a';ctx.fillRect(100,490,800,75);ctx.fillStyle='#fff';ctx.font='bold 22px Montserrat, sans-serif';ctx.textAlign='center';ctx.fillText(sequenceFor(s).map(step=>`${step.target+1} (${step.hand || 'either'})`).join(' → '),500,530); }
     return;
   }
-  if (s.id === 6) { dualTargets(s).forEach((p,i) => circle(ctx,p,s.config.radius,i ? 'RIGHT' : 'LEFT',i ? '#38bdf8' : '#c084fc')); return; }
-  if (s.id === 5) { circle(ctx,goalFor(s),s.config.radius,'DROP'); circle(ctx,s.object,30,'◆','#fbbf24'); return; }
-  if (s.id === 3) { circle(ctx, s.object, s.config.radius, '★', '#fbbf24'); return; }
-  if (s.id === 4) { circle(ctx, goalFor(s), s.config.radius, 'DROP'); circle(ctx, s.object, 30, '◆', '#fbbf24'); return; }
+  if (s.id === 6) { dualTargets(s).forEach((p,i) => circle(ctx,p,s.config.radius,i ? 'RIGHT' : 'LEFT',i ? '#02ae90' : '#ff7673')); return; }
+  if (s.id === 5) { circle(ctx,goalFor(s),s.config.radius,'DROP'); circle(ctx,s.object,30,'◆','#efb700'); return; }
+  if (s.id === 3) { circle(ctx, s.object, s.config.radius, '★', '#efb700'); return; }
+  if (s.id === 4) { circle(ctx, goalFor(s), s.config.radius, 'DROP'); circle(ctx, s.object, 30, '◆', '#efb700'); return; }
   circle(ctx, targetFor(s), s.config.radius, s.id === 2 ? s.hands[s.round] : 'TOUCH');
 }
 export function instruction(s) {
@@ -45,8 +45,8 @@ export function instruction(s) {
   return s.id === 2 ? `Touch with your ${s.hands[s.round]?.toUpperCase()} hand` : 'Keep your index finger inside the target';
 }
 export function drawPath(ctx,s,path) {
-  ctx.beginPath();path.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle='#38bdf855';ctx.lineWidth=s.config.pathWidth;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();ctx.strokeStyle='#e0f2fe';ctx.lineWidth=3;ctx.stroke();
-  circle(ctx,path[0],35,'START');circle(ctx,path.at(-1),35,'END','#34d399');
+  ctx.beginPath();path.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle='#02ae9055';ctx.lineWidth=s.config.pathWidth;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();ctx.strokeStyle='#e5f8f4';ctx.lineWidth=3;ctx.stroke();
+  circle(ctx,path[0],35,'START');circle(ctx,path.at(-1),35,'END','#efb700');
 }
 export function transferInstruction(s, source = sourceFor(s)) {
   return { WAITING: `Grab with your ${source.toUpperCase()} hand`, SOURCE_GRABBED: 'Bring your hands close; keep the receiving hand open', HANDS_NEAR: `Release your ${source.toUpperCase()} hand first`, SOURCE_RELEASED: `Now pinch with your ${otherHand(source).toUpperCase()} hand`, TRANSFER_COMPLETE: 'Move the crystal to the target, then release' }[s.phase] || 'Bring your hands close';

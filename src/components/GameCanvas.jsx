@@ -44,7 +44,7 @@ export default function GameCanvas({
 
       // 1. Draw fingertip trails
       if (trailPoints && trailPoints.length > 0) {
-        drawTrail(ctx, trailPoints, width, height, 'rgba(56, 189, 248, 0.75)');
+        drawTrail(ctx, trailPoints, width, height, 'rgba(2, 174, 144, 0.75)');
       }
 
       // 2. Custom Game Elements Render Callback (targets, balls, drop zones, step prompts)
@@ -58,9 +58,9 @@ export default function GameCanvas({
         trackingData.hands.forEach(hand => {
           const { landmarks, handedness, isPinching, indexTip, thumbTip } = hand;
           const isRight = handedness === 'Right';
-          const primaryColor = isRight ? '#38bdf8' : '#c084fc'; // Cyan for Right hand, Purple for Left hand
-          const primaryGlow = isRight ? 'rgba(56, 189, 248, 0.5)' : 'rgba(192, 132, 252, 0.5)';
-          const accentColor = isPinching ? '#fbbf24' : '#34d399'; // Amber if pinching, Emerald if open
+          const primaryColor = isRight ? '#02ae90' : '#ff7673'; // Teal for Right hand, Coral for Left hand
+          const primaryGlow = isRight ? 'rgba(2, 174, 144, 0.5)' : 'rgba(255, 118, 115, 0.5)';
+          const accentColor = isPinching ? '#efb700' : '#02ae90'; // Amber if pinching, Emerald if open
 
           // Draw skeleton lines with glow effect
           ctx.save();
@@ -130,13 +130,13 @@ export default function GameCanvas({
               ctx.fillStyle = 'rgba(251, 191, 36, 0.35)';
               ctx.fill();
               ctx.lineWidth = 3;
-              ctx.strokeStyle = '#fbbf24';
-              ctx.shadowColor = '#fbbf24';
+              ctx.strokeStyle = '#efb700';
+              ctx.shadowColor = '#efb700';
               ctx.shadowBlur = 15;
               ctx.stroke();
 
               // Pinch text indicator badge
-              ctx.font = 'bold 13px "Fredoka", sans-serif';
+              ctx.font = 'bold 13px "Montserrat", sans-serif';
               ctx.fillStyle = '#ffffff';
               ctx.textAlign = 'center';
               ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
@@ -153,11 +153,11 @@ export default function GameCanvas({
             const wy = Math.min(height - 24, wrist.y * height + 32);
 
             ctx.save();
-            ctx.font = 'bold 14px "Fredoka", sans-serif';
+            ctx.font = 'bold 14px "Montserrat", sans-serif';
             const labelText = `${handedness.toUpperCase()} HAND`;
             const textWidth = ctx.measureText(labelText).width;
 
-            ctx.fillStyle = isRight ? 'rgba(56, 189, 248, 0.9)' : 'rgba(192, 132, 252, 0.9)';
+            ctx.fillStyle = isRight ? 'rgba(2, 174, 144, 0.9)' : 'rgba(255, 118, 115, 0.9)';
             ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
             ctx.shadowBlur = 8;
             ctx.roundRect(wx - textWidth / 2 - 10, wy - 14, textWidth + 20, 24, 12);

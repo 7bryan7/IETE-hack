@@ -39,13 +39,14 @@ export default function Calibration({ videoRef, onCalibrationComplete, onSkip })
   return (
     <div className="calibration-container">
       <div className="calibration-header">
-        <h2>Camera & Hand Setup 🖐️🖐️</h2>
+        <h1>Camera & Hand Setup</h1>
         <p>Get ready for MotionForge by calibrating your hands!</p>
       </div>
 
       <div className="calibration-view-wrapper">
         <CameraView videoRef={videoRef} />
-        <GameCanvas trackingDataRef={trackingDataRef} showSkeleton={true} />
+        <GameCanvas trackingDataRef={trackingDataRef} showSkeleton={true} showDebug={false} />
+      </div>
 
         <div className="calibration-overlay-card">
           {!isLoaded ? (
@@ -74,8 +75,6 @@ export default function Calibration({ videoRef, onCalibrationComplete, onSkip })
             </div>
           )}
         </div>
-      </div>
-
       <div className="calibration-actions">
         {error && <p role="alert">{error}</p>}
         <button className="btn btn-secondary" onClick={onSkip}>View level map</button>

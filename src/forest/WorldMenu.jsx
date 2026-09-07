@@ -1,6 +1,6 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight, Trees, Lock, Compass } from 'lucide-react';
-import './forest.css';
+import { ArrowRight, Trees, Lock, Compass } from 'lucide-react';
+import ExperienceHeader from '../components/ExperienceHeader';
 
 function ForestPreview() {
   return <svg viewBox="0 0 600 300" className="forest-preview" role="img" aria-label="A sunny forest with a winding path and glowing crystal">
@@ -15,7 +15,7 @@ function ForestPreview() {
 }
 export default function WorldMenu({ onForest, onMissions, onHome }) {
   return <main className="world-menu">
-    <header><button className="forest-button subtle" onClick={onHome}><ArrowLeft size={17} />Home</button><span>MOTIONFORGE</span><button className="forest-button subtle" onClick={onMissions}>Classic missions<ArrowRight size={16} /></button></header>
+    <ExperienceHeader active="worlds" onHome={onHome} onMissions={onMissions} />
     <div className="world-menu-heading"><span className="forest-eyebrow"><Compass size={16} /> A LITTLE MOVEMENT. A WORLD OF DISCOVERY.</span><h1>Where shall we explore?</h1><p>Step into a world of wonder. Your hands lead the way.</p></div>
     <div className="world-cards"><article className="world-card"><div className="world-card-art"><ForestPreview /><span className="world-card-badge">WORLD 01 · READY TO EXPLORE</span></div><div className="world-card-body"><div className="world-card-heading"><h2><Trees size={25} />Forest World</h2><span>4 levels</span></div><p>Follow the sunlight, discover glowing treasures, and bring a little magic to the woods.</p><div className="world-card-tags"><span>Explore</span><span>Discover</span><span>Grab & place</span></div><button className="forest-button primary" onClick={onForest}>Enter the forest<ArrowRight size={18} /></button></div></article>
     <article className="world-card locked"><div className="world-locked-art"><Lock size={38} /><span>NEW ADVENTURES ARE GROWING</span></div><div className="world-card-body"><div className="world-card-heading"><h2>House World</h2><Lock size={17} /></div><p>A cozy place for your next adventure. There’s more to discover another day.</p><button className="forest-button" disabled>Coming soon</button></div></article></div>

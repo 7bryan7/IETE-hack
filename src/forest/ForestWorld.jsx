@@ -9,7 +9,6 @@ import { createForestRun, pauseForest } from './forestLogic.js';
 import { forestLevels } from './forestLevels.js';
 import { readForestHands } from './worldControls.js';
 import { readForestProgress, saveForestProgress } from './progress.js';
-import './forest.css';
 
 function ForestCamera({ source, onStatus }) {
   const videoRef = useRef(null);

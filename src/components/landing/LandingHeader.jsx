@@ -1,15 +1,11 @@
 import React from 'react';
+import Brand from '../Brand';
 
 export default function Header({ onNavToggle, onStartGame }) {
   return (
     <header className="c-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <a href="#home" className="c-header_button" aria-label="MotionForge 2.5D Playground">
-        <span className="c-header_button_icon -logo-maple" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '22px' }}>🖐️</span>
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: '16px', letterSpacing: '0.04em', color: '#2A2B2A' }}>
-            MOTION<span style={{ color: '#02AE90' }}>FORGE</span>
-          </span>
-        </span>
+        <Brand />
       </a>
 
       <nav className="u-none@to-medium" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>

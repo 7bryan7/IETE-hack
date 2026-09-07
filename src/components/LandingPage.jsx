@@ -13,10 +13,6 @@ import Popup from './landing/Popup.jsx';
 import CookieConsent from './landing/CookieConsent.jsx';
 import FloatingCtas from './landing/FloatingCtas.jsx';
 
-import '../styles/base.css';
-import '../styles/home.css';
-import '../styles/landing.css';
-
 export default function LandingPage({ onStartClick, onCalibrateClick, onSelectLevel, onOpenMap }) {
   const [navOpen, setNavOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -28,6 +24,9 @@ export default function LandingPage({ onStartClick, onCalibrateClick, onSelectLe
     const locked = navOpen || popupOpen || factsOpen;
     document.body.classList.toggle('is-locked', locked);
     document.body.classList.toggle('is-nav-open', navOpen);
+    return () => {
+      document.body.classList.remove('is-locked', 'is-nav-open');
+    };
   }, [navOpen, popupOpen, factsOpen]);
 
   // has-dom-ready on <html> for animations

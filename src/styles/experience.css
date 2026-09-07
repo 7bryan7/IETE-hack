@@ -1,0 +1,177 @@
+/* Shared landing and playground presentation. Loaded after component layouts. */
+.mf-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font: 900 16px var(--font-label);
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.mf-brand-icon { font-size: 22px; }
+.mf-brand-accent { color: var(--green); }
+.experience-header {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 26px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.experience-brand { display: inline-flex; flex-shrink: 0; }
+.experience-header nav { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.experience-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 15px;
+  border-radius: var(--radius-full);
+  font: 700 12px var(--font-label);
+  color: var(--text-muted);
+}
+.experience-nav-link:hover, .experience-nav-link[aria-current="page"] {
+  background: var(--white);
+  color: var(--green-ink);
+  box-shadow: var(--shadow-sm);
+}
+.app-shell :is(h1, h2, h3) { font-family: var(--font-heading); }
+.app-shell :is(button, select):focus-visible {
+  outline: 3px solid var(--green-ink);
+  outline-offset: 4px;
+}
+.btn, .forest-button, .forest-icon-button {
+  border-radius: var(--radius-full);
+  font-family: var(--font-label);
+  font-weight: 800;
+  transition: background .2s, box-shadow .2s, transform .2s;
+}
+.btn-primary, .forest-button.primary {
+  background: var(--yellow-dark);
+  border: 2px solid transparent;
+  color: var(--ink);
+  box-shadow: 0 6px 18px #ea9f0e30, inset 0 -3px 0 #87550020;
+}
+.btn-primary:hover, .forest-button.primary:hover {
+  background: var(--yellow);
+  box-shadow: 0 8px 22px #ea9f0e40;
+  transform: translateY(-2px);
+}
+.btn-secondary, .btn-icon, .forest-button, .forest-icon-button {
+  background: var(--white);
+  color: var(--green-ink);
+  border: 2px solid var(--border-warm);
+  box-shadow: var(--shadow-sm);
+}
+.btn-secondary:hover, .btn-icon:hover, .forest-button:hover, .forest-icon-button:hover {
+  background: var(--green-soft);
+  border-color: var(--green);
+  transform: translateY(-2px);
+}
+.forest-button.subtle { color: var(--green-ink); }
+.app-shell button:disabled { cursor: not-allowed; }
+.btn:disabled, .forest-button:disabled { opacity: .6; box-shadow: none; transform: none; }
+.btn:disabled:hover, .forest-button:disabled:hover { background: var(--bg-card-hover); border-color: var(--border-warm); }
+
+/* Camera imagery stays on a neutral backdrop; its controls share the page theme. */
+.camera-container { background: var(--surface-camera); }
+.camera-feed { position: absolute; inset: 0; }
+.camera-feed.hidden { visibility: hidden; }
+.camera-overlay-state { position: relative; z-index: 20; max-height: calc(100% - 24px); overflow-y: auto; }
+.camera-overlay-state > * { flex-shrink: 0; }
+.camera-overlay-state, .calib-status {
+  color: var(--ink);
+  background: var(--bg-glass);
+  border: 2px solid var(--border-warm);
+  box-shadow: var(--shadow-md);
+}
+.camera-overlay-state h3, .calib-status h3 { font-weight: 800; }
+.camera-overlay-state p, .calib-status p { color: var(--text-muted); }
+.spinner { border-color: var(--green-soft); border-top-color: var(--green); }
+.calibration-container { width: 100%; padding-top: 26px; }
+.calibration-header h1 { font-size: clamp(26px, 4vw, 38px); font-weight: 900; }
+.calibration-header p { color: var(--text-muted); font-size: 19px; margin-top: 12px; }
+.calibration-view-wrapper { border: 3px solid var(--border-warm); border-radius: 28px; }
+.calibration-overlay-card { position: static; transform: none; width: 100%; }
+.calib-status { justify-content: center; }
+.calibration-actions { flex-wrap: wrap; gap: 14px; align-items: center; }
+.calibration-actions [role="alert"] { flex-basis: 100%; color: #b94240; text-align: center; }
+.calibration-actions .btn-large { font-size: 16px; padding: 14px 26px; }
+
+/* Open worlds use the same cream surfaces and colorful accents as the homepage. */
+.forest-world, .world-menu {
+  --forest-ink: var(--ink);
+  --forest-green: var(--green-ink);
+  font-family: var(--font-label);
+}
+.world-menu { background: transparent; padding: 0 32px 48px; }
+.world-menu > .experience-header { max-width: 1216px; padding-inline: 0; }
+.world-menu-heading { padding: 48px 0 38px; }
+.world-menu-heading h1 { font-weight: 900; letter-spacing: -.04em; font-size: clamp(30px, 4vw, 48px); }
+.world-menu-heading p { color: var(--text-muted); font: 500 20px/1.5 var(--font-body); }
+.world-menu-heading > .forest-eyebrow { color: var(--amber-ink); font-size: 11px; }
+.world-cards { max-width: 1040px; gap: 28px; }
+.world-card { background: var(--white); border: 2px solid var(--border-warm); border-radius: 32px; box-shadow: var(--shadow-md); }
+.world-card-heading h2 { font-weight: 800; }
+.world-card-heading > span, .world-card-tags span { color: var(--green-ink); background: var(--green-soft); border: 0; border-radius: var(--radius-full); }
+.world-card-body > p { color: var(--text-muted); font: 500 18px/1.55 var(--font-body); }
+.world-card-badge { color: var(--green-ink); background: var(--white); font-size: 10px; }
+.world-card-tags { flex-wrap: wrap; }
+.world-card-tags span { font-size: 11px; padding: 7px 12px; }
+.world-card.locked { background: #fff8f0; border-color: var(--border-warm); }
+.world-locked-art { background: linear-gradient(145deg, var(--orange), var(--cream)); color: var(--amber-ink); }
+.world-menu-note { color: var(--text-muted); font-size: 12px; }
+
+/* Forest HUD, permission, pause and completion dialogs. */
+.forest-glass, .forest-dialog, .forest-compass-pill {
+  background: var(--bg-glass);
+  border: 2px solid var(--border-warm);
+  box-shadow: var(--shadow-md);
+}
+.forest-topbar { background: linear-gradient(#fff1e4f5, #fff1e480, transparent); }
+.forest-title h1, .forest-dialog h2, .forest-mission h2 { font-weight: 800; }
+.forest-title span, .forest-eyebrow, .forest-compass-icon { color: var(--green-ink); }
+.forest-mission, .forest-nova-card { border-radius: 24px; }
+.forest-mission p, .forest-dialog > p, .forest-progress-copy, .forest-checkpoints,
+.forest-nova-body p, .forest-dialog .forest-small { color: var(--text-muted); }
+.forest-mission p, .forest-dialog > p { font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+.forest-level-dots span { background: var(--cream); color: var(--text-muted); }
+.forest-level-dots .current { background: var(--yellow-dark); color: var(--ink); box-shadow: 0 0 0 4px var(--amber-soft); }
+.forest-level-dots .done, .forest-dialog-icon { background: var(--green-soft); color: var(--green-ink); }
+.forest-mission progress, .forest-mission progress::-webkit-progress-bar { background: var(--border-warm); }
+.forest-mission progress::-webkit-progress-value { background: var(--green); }
+.forest-mission progress::-moz-progress-bar { background: var(--green); }
+.forest-checkpoints, .forest-discovery-tracker { border-color: var(--border-warm); }
+.forest-checkpoints .found, .forest-result-strip { color: var(--green-ink); }
+.forest-control-choice { background: var(--white); color: var(--ink); border: 2px solid var(--border-warm); border-radius: 20px; }
+.forest-control-choice.selected { background: var(--green-soft); border-color: var(--green-ink); box-shadow: none; }
+.forest-control-choice small { color: var(--text-muted); }
+.forest-shade { background: #2a2b2a30; }
+.forest-dialog { border-radius: 32px; }
+.forest-toast { background: var(--green-soft); color: var(--green-ink); }
+.forest-camera, .forest-camera .camera-container, .forest-camera .camera-overlay-state { background: var(--surface-camera); }
+.forest-camera { border-color: var(--border-warm); }
+.forest-camera .camera-overlay-state p { color: var(--white); }
+.forest-render-error { background: var(--cream); color: var(--ink); }
+
+@media (max-width: 650px) {
+  .experience-header { padding: 20px 18px 12px; flex-wrap: wrap; gap: 14px; }
+  .experience-header nav { gap: 2px; }
+  .experience-nav-link { font-size: 11px; padding: 10px 12px; }
+  .world-menu { padding: 0 18px 30px; }
+  .world-menu-heading { padding: 28px 0; }
+  .world-menu-heading > .forest-eyebrow { font-size: 9px; }
+  .world-menu-heading p { font-size: 18px; }
+  .calibration-container { padding: 20px 16px; }
+  .calibration-view-wrapper { height: 460px; }
+  .calib-status { padding: 12px 16px; font-size: 13px; }
+  .camera-overlay-state { padding: 24px; max-width: calc(100% - 24px); }
+  .forest-mission p { font-size: 13px; }
+  .forest-compass-pill { display: none; }
+  .forest-nova-card { top: auto; bottom: 225px; right: 14px; width: 220px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell *, .app-shell *::before, .app-shell *::after { animation: none !important; transition: none !important; }
+}
