@@ -77,6 +77,8 @@ export default function Calibration({ videoRef, onCalibrationComplete, onSkip })
       </div>
 
       <div className="calibration-actions">
+        {error && <p role="alert">{error}</p>}
+        <button className="btn btn-secondary" onClick={onSkip}>View level map</button>
         <button
           className={`btn btn-primary btn-large ${bothHandsDetected ? 'pulse-glow' : ''}`}
           onClick={onCalibrationComplete}

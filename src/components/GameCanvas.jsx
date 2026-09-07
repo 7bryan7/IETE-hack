@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import { DEBUG_HAND_TRACKING } from '../tracking/config.js';
 import { drawTrail } from '../utils/movement';
-import { DEBUG_HAND_TRACKING } from '../hooks/useHandTracking';
 
 // MediaPipe hand landmark skeleton connections
 const HAND_CONNECTIONS = [
@@ -15,6 +15,7 @@ export default function GameCanvas({
   trackingDataRef,
   onRenderFrame,
   showSkeleton = true,
+  showDebug = DEBUG_HAND_TRACKING,
   trailPoints = []
 }) {
   const canvasRef = useRef(null);
@@ -171,45 +172,23 @@ export default function GameCanvas({
         });
       }
 
-      // 4. Development/Debug Overlay
-      if (DEBUG_HAND_TRACKING && trackingData && trackingData.hands && trackingData.hands.length > 0) {
-        let boxY = 16;
-        trackingData.hands.forEach(hand => {
-          const {
-            handedness,
-            rawHandedness,
-            handednessScore,
-            pinchRatio,
-            trackingStatus
-          } = hand;
-
-          ctx.save();
-          ctx.fillStyle = 'rgba(11, 16, 29, 0.85)';
-          ctx.strokeStyle = handedness === 'Right' ? '#38bdf8' : '#c084fc';
-          ctx.lineWidth = 2;
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-          ctx.shadowBlur = 6;
-          ctx.roundRect(16, boxY, 210, 120, 8);
-          ctx.fill();
-          ctx.stroke();
-
-          ctx.fillStyle = handedness === 'Right' ? '#38bdf8' : '#c084fc';
-          ctx.font = 'bold 13px sans-serif';
-          ctx.textAlign = 'left';
-          ctx.textBaseline = 'alphabetic';
-          ctx.fillText(`${handedness.toUpperCase()} HAND`, 26, boxY + 20);
-
-          ctx.fillStyle = '#cbd5e1';
-          ctx.font = '12px monospace';
-          ctx.fillText(`Raw: ${rawHandedness || 'N/A'}`, 26, boxY + 38);
-          ctx.fillText(`Normalized: ${handedness}`, 26, boxY + 56);
-          ctx.fillText(`Confidence: ${handednessScore !== undefined ? (handednessScore * 100).toFixed(0) + '%' : '100%'}`, 26, boxY + 74);
-          ctx.fillText(`Pinch: ${pinchRatio !== undefined ? pinchRatio.toFixed(2) : 'N/A'}`, 26, boxY + 92);
-          ctx.fillText(`Tracking: ${trackingStatus || 'Stable'}`, 26, boxY + 110);
-          ctx.restore();
-
-          boxY += 130;
-        });
+      if (showDebug) {
+        const debugHands = trackingData?.debugHands || [];
+        const lines = debugHands.length ? debugHands.flatMap(hand => [
+          `Physical Hand: ${hand.handedness || 'Pending'}`,
+          `Raw: ${hand.rawHandedness || 'Unknown'} | Normalized: ${hand.normalizedHandedness || 'Unknown'}`,
+          `Confidence: ${hand.handednessConfidence.toFixed(2)} | Pinch: ${Number.isFinite(hand.pinchRatio) ? hand.pinchRatio.toFixed(2) : '--'}`,
+          `Tracking: ${hand.trackingStatus}`,
+        ]) : [trackingData?.status || 'Tracking: No hands'];
+        ctx.save();
+        ctx.font = '12px monospace';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+        ctx.fillRect(8, 8, Math.min(340, width - 16), lines.length * 17 + 12);
+        ctx.fillStyle = '#ffffff';
+        lines.forEach((line, i) => ctx.fillText(line, 14, 14 + i * 17));
+        ctx.restore();
       }
 
       animIdRef.current = requestAnimationFrame(render);
@@ -222,7 +201,7 @@ export default function GameCanvas({
         cancelAnimationFrame(animIdRef.current);
       }
     };
-  }, [trackingDataRef, onRenderFrame, showSkeleton, trailPoints]);
+  }, [trackingDataRef, onRenderFrame, showSkeleton, showDebug, trailPoints]);
 
   return (
     <canvas ref={canvasRef} className="game-canvas" />

@@ -1,3 +1,5 @@
+import { TRACKING_CONFIG } from '../tracking/config.js';
+
 /**
  * Gesture detection utilities for MotionForge
  */
@@ -24,62 +26,23 @@ export function getPixelDistance(p1, p2, width, height) {
 }
 
 /**
- * Maps raw MediaPipe handedness ('Left'/'Right') from camera perspective
- * to normalized physical handedness ('Right'/'Left') for selfie-view user perception.
- */
-export function normalizeHandedness(rawCategoryName) {
-  if (rawCategoryName === 'Left') return 'Right';
-  if (rawCategoryName === 'Right') return 'Left';
-  return rawCategoryName || 'Right';
-}
-
-/**
  * Pinch gesture detector with configurable thresholds and hysteresis
  * Landmark 4: Thumb Tip
  * Landmark 8: Index Finger Tip
- * Landmark 0: Wrist
- * Landmark 9: Middle Finger MCP
  */
-export const DEFAULT_GRAB_THRESHOLD = 0.32;
-export const DEFAULT_RELEASE_THRESHOLD = 0.42;
+export const DEFAULT_PINCH_THRESHOLD = TRACKING_CONFIG.grabThreshold;
 
-/**
- * Calculates normalized pinch ratio between Thumb Tip (4) and Index Tip (8)
- * relative to hand scale (Wrist 0 to Middle MCP 9).
- */
-export function getPinchRatio(handLandmarks) {
-  if (!handLandmarks || handLandmarks.length < 21) return 1.0;
-  const thumbTip = handLandmarks[4];
-  const indexTip = handLandmarks[8];
-  const wrist = handLandmarks[0];
-  const middleMCP = handLandmarks[9];
-
-  if (!thumbTip || !indexTip || !wrist || !middleMCP) return 1.0;
-
-  const pinchDistance = getDistance(thumbTip, indexTip);
-  const handSize = getDistance(wrist, middleMCP);
-
-  if (handSize === 0 || !isFinite(handSize)) return 1.0;
-  return pinchDistance / handSize;
+export function getPinchRatio(landmarks, aspect = 1) {
+  if (!landmarks || landmarks.length < 10) return Infinity;
+  const distance = (a, b) => Math.hypot((a.x - b.x) * aspect, a.y - b.y);
+  const handSize = distance(landmarks[0], landmarks[9]);
+  return handSize > 1e-6 ? distance(landmarks[4], landmarks[8]) / handSize : Infinity;
 }
 
-export function isPinching(
-  handLandmarks,
-  currentPinchState = false,
-  grabThreshold = DEFAULT_GRAB_THRESHOLD,
-  releaseThreshold = DEFAULT_RELEASE_THRESHOLD
-) {
-  if (!handLandmarks || handLandmarks.length < 21) {
-    return false;
-  }
-
-  const ratio = getPinchRatio(handLandmarks);
-
-  if (currentPinchState) {
-    return ratio < releaseThreshold;
-  } else {
-    return ratio < grabThreshold;
-  }
+export function isPinching(landmarks, currentPinchState = false,
+  grabThreshold = DEFAULT_PINCH_THRESHOLD, releaseThreshold = TRACKING_CONFIG.releaseThreshold, aspect = 1) {
+  const ratio = getPinchRatio(landmarks, aspect);
+  return Number.isFinite(ratio) && (currentPinchState ? ratio <= releaseThreshold : ratio < grabThreshold);
 }
 
 /**

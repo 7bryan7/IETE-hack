@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Camera, CameraOff, AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function CameraView({ videoRef, onVideoReady }) {
   const [cameraState, setCameraState] = useState('initializing'); // initializing, active, denied, missing, error
   const [errorMessage, setErrorMessage] = useState('');
 
+  const streamRef = useRef(null);
+  const requestRef = useRef(0);
+  const stopStream = () => {
+    streamRef.current?.getTracks().forEach(track => track.stop());
+    streamRef.current = null;
+  };
+
   const startCamera = async () => {
+    const request = ++requestRef.current;
+    stopStream();
     setCameraState('initializing');
     setErrorMessage('');
 
@@ -20,19 +29,29 @@ export default function CameraView({ videoRef, onVideoReady }) {
         video: {
           width: { ideal: 1280 },
           height: { ideal: 720 },
-          frameRate: { ideal: 30, max: 30 },
-          facingMode: 'user'
+          frameRate: { ideal: 30 },
+          facingMode: { ideal: 'user' }
         },
         audio: false
       });
 
+      if (request !== requestRef.current || !videoRef.current) {
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
+      streamRef.current = stream;
       if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current.play().then(() => {
+        const video = videoRef.current;
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+          if (request !== requestRef.current) return;
+          video.play().then(() => {
+            if (request !== requestRef.current) return;
             setCameraState('active');
             if (onVideoReady) onVideoReady();
           }).catch(err => {
+            if (request !== requestRef.current) return;
+            stopStream();
             console.error('Video play error:', err);
             setCameraState('error');
             setErrorMessage('Unable to play webcam video feed.');
@@ -40,6 +59,7 @@ export default function CameraView({ videoRef, onVideoReady }) {
         };
       }
     } catch (err) {
+      if (request !== requestRef.current) return;
       console.error('Camera access error:', err);
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
         setCameraState('denied');
@@ -55,14 +75,15 @@ export default function CameraView({ videoRef, onVideoReady }) {
   };
 
   useEffect(() => {
+    const video = videoRef.current;
     startCamera();
 
     return () => {
-      // Clean up video stream when component unmounts
-      if (videoRef.current && videoRef.current.srcObject) {
-        const tracks = videoRef.current.srcObject.getTracks();
-        tracks.forEach(track => track.stop());
-        videoRef.current.srcObject = null;
+      ++requestRef.current;
+      stopStream();
+      if (video) {
+        video.onloadedmetadata = null;
+        video.srcObject = null;
       }
     };
   }, []);
