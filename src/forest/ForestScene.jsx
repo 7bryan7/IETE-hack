@@ -491,12 +491,6 @@ function Dragonflies({ run, reducedMotion }) {
       {DRAGONFLY_CONFIGS.map(cfg => (
         <Dragonfly key={cfg.id} config={cfg} run={run} reducedMotion={reducedMotion} />
       ))}
-      {Array.from({ length: 12 }, (_, i) => (
-        <mesh key={i} position={[Math.sin(i * 12.3) * 7.5, 0.9 + (i % 4) * 0.5, Math.cos(i * 4.6) * 5.5 - 2]}>
-          <sphereGeometry args={[0.025, 4, 4]} />
-          <meshBasicMaterial color="#fff8ca" />
-        </mesh>
-      ))}
     </group>
   );
 }
