@@ -4,22 +4,25 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test": "node --test src/tracking/handTracking.test.js src/levels/levels.test.js",
+    "test": "node --test src/tracking/handTracking.test.js src/levels/levels.test.js src/forest/forest.test.js",
+    "test:forest": "playwright test",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "^0.10.14",
+    "@react-three/fiber": "^8.18.0",
     "lucide-react": "^0.344.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "three": "^0.170.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
     "vite": "^5.2.0"
   }
 }
-

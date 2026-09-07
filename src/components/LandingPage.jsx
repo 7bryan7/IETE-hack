@@ -22,6 +22,9 @@ export default function LandingPage({ onStartClick, onCalibrateClick }) {
         </p>
 
         <div className="hero-actions">
+          <button className="btn btn-primary btn-hero" onClick={onStartClick}>
+            <Sparkles size={22} /> Explore Open Worlds
+          </button>
           <button className="btn btn-primary btn-hero" onClick={onCalibrateClick}>
             <Play size={22} fill="currentColor" /> Start Playing Now
           </button>

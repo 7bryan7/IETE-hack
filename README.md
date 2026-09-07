@@ -22,6 +22,16 @@
 
 ---
 
+## Forest World extension
+
+The existing Vite/React application now includes a separate, playable 3D Forest World. Choose **Explore Open Worlds** on Home, or open `/#worlds`; `/#forest` links directly to the forest intro. Four progressive levels cover two-hand navigation, crystal discovery, grab-and-place, and a magical-leaf quest. House World is Coming Soon. Classic missions remain accessible from the world menu.
+
+The forest reuses the current webcam component and two-hand tracking hook, including handedness, coordinate mapping, smoothing, and pinch classification. Rendering uses React Three Fiber and Three.js; mouse/keyboard controls provide an explicit fallback. Completed forest levels persist separately from classic mission progress. This requested extension adds a compact 3D scene with fixed drag planes; the original MVP design below remains the reference for the classic experience.
+
+See [Forest World controls, architecture, tests, and device checklist](src/forest/VALIDATION.md). Run `npm test`, `npm run build`, and `npm run test:forest` (installed Chrome required) to verify the change. Physical webcam sensitivity and deployed-device performance require a real-device check.
+
+---
+
 ## ✨ What is MotionForge?
 
 MotionForge is a **browser-based, webcam-controlled 2.5D motor-practice playground**. Users move a hand in front of a standard webcam to **select, grab, move, drop, and place** virtual objects while exploring an interactive scene and completing optional missions.
