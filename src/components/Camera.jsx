@@ -20,6 +20,7 @@ export default function CameraView({ videoRef, onVideoReady }) {
         video: {
           width: { ideal: 1280 },
           height: { ideal: 720 },
+          frameRate: { ideal: 30, max: 30 },
           facingMode: 'user'
         },
         audio: false

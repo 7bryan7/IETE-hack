@@ -24,30 +24,61 @@ export function getPixelDistance(p1, p2, width, height) {
 }
 
 /**
+ * Maps raw MediaPipe handedness ('Left'/'Right') from camera perspective
+ * to normalized physical handedness ('Right'/'Left') for selfie-view user perception.
+ */
+export function normalizeHandedness(rawCategoryName) {
+  if (rawCategoryName === 'Left') return 'Right';
+  if (rawCategoryName === 'Right') return 'Left';
+  return rawCategoryName || 'Right';
+}
+
+/**
  * Pinch gesture detector with configurable thresholds and hysteresis
  * Landmark 4: Thumb Tip
  * Landmark 8: Index Finger Tip
+ * Landmark 0: Wrist
+ * Landmark 9: Middle Finger MCP
  */
-export const DEFAULT_PINCH_THRESHOLD = 0.08; // Normalized threshold (~8% of screen width)
+export const DEFAULT_GRAB_THRESHOLD = 0.32;
+export const DEFAULT_RELEASE_THRESHOLD = 0.42;
 
-export function isPinching(handLandmarks, currentPinchState = false, customThreshold = DEFAULT_PINCH_THRESHOLD) {
-  if (!handLandmarks || handLandmarks.length < 9) {
+/**
+ * Calculates normalized pinch ratio between Thumb Tip (4) and Index Tip (8)
+ * relative to hand scale (Wrist 0 to Middle MCP 9).
+ */
+export function getPinchRatio(handLandmarks) {
+  if (!handLandmarks || handLandmarks.length < 21) return 1.0;
+  const thumbTip = handLandmarks[4];
+  const indexTip = handLandmarks[8];
+  const wrist = handLandmarks[0];
+  const middleMCP = handLandmarks[9];
+
+  if (!thumbTip || !indexTip || !wrist || !middleMCP) return 1.0;
+
+  const pinchDistance = getDistance(thumbTip, indexTip);
+  const handSize = getDistance(wrist, middleMCP);
+
+  if (handSize === 0 || !isFinite(handSize)) return 1.0;
+  return pinchDistance / handSize;
+}
+
+export function isPinching(
+  handLandmarks,
+  currentPinchState = false,
+  grabThreshold = DEFAULT_GRAB_THRESHOLD,
+  releaseThreshold = DEFAULT_RELEASE_THRESHOLD
+) {
+  if (!handLandmarks || handLandmarks.length < 21) {
     return false;
   }
 
-  const thumbTip = handLandmarks[4];
-  const indexTip = handLandmarks[8];
-
-  const dist = getDistance(thumbTip, indexTip);
-  
-  // Apply hysteresis to prevent rapid flickering between grab and release
-  const grabThreshold = customThreshold;
-  const releaseThreshold = customThreshold * 1.35;
+  const ratio = getPinchRatio(handLandmarks);
 
   if (currentPinchState) {
-    return dist < releaseThreshold;
+    return ratio < releaseThreshold;
   } else {
-    return dist < grabThreshold;
+    return ratio < grabThreshold;
   }
 }
 
