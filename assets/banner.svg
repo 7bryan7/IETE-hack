@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="400" viewBox="0 0 1600 400" role="img" aria-label="MotionForge — a browser-based, webcam-controlled 2.5D motor-practice playground">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16213e"/>
+      <stop offset="0.5" stop-color="#1e3c72"/>
+      <stop offset="1" stop-color="#2a5298"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.82" cy="0.25" r="0.65">
+      <stop offset="0" stop-color="#6dd5ed" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#6dd5ed" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#c9dcff"/>
+    </linearGradient>
+    <linearGradient id="ballGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff8a80"/>
+      <stop offset="1" stop-color="#d32f2f"/>
+    </linearGradient>
+    <linearGradient id="blockGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe082"/>
+      <stop offset="1" stop-color="#f9a825"/>
+    </linearGradient>
+    <linearGradient id="starGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a5e8f7"/>
+      <stop offset="1" stop-color="#26c6da"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="400" fill="url(#bg)"/>
+  <rect width="1600" height="400" fill="url(#glow)"/>
+
+  <!-- background dots -->
+  <g fill="#ffffff" opacity="0.07">
+    <circle cx="120" cy="60" r="3"/>
+    <circle cx="340" cy="90" r="2"/>
+    <circle cx="520" cy="50" r="3"/>
+    <circle cx="700" cy="110" r="2"/>
+    <circle cx="900" cy="70" r="3"/>
+    <circle cx="1050" cy="330" r="2"/>
+    <circle cx="1450" cy="60" r="3"/>
+    <circle cx="1520" cy="180" r="2"/>
+    <circle cx="60" cy="330" r="2"/>
+    <circle cx="260" cy="360" r="3"/>
+    <circle cx="480" cy="340" r="2"/>
+    <circle cx="820" cy="360" r="2"/>
+  </g>
+
+  <!-- floating playroom objects -->
+  <!-- ball -->
+  <circle cx="1170" cy="140" r="48" fill="url(#ballGrad)"/>
+  <ellipse cx="1152" cy="122" rx="15" ry="10" fill="#ffffff" opacity="0.35"/>
+  <!-- star -->
+  <path d="M 1330 89 L 1341.2 117.6 L 1371.8 119.4 L 1348.1 138.9 L 1355.9 168.6 L 1330 152 L 1304.1 168.6 L 1311.9 138.9 L 1288.2 119.4 L 1318.8 117.6 Z" fill="url(#starGrad)"/>
+  <!-- block -->
+  <rect x="1420" y="120" width="72" height="72" rx="14" fill="url(#blockGrad)"/>
+  <rect x="1436" y="138" width="40" height="10" rx="5" fill="#ffffff" opacity="0.35"/>
+  <rect x="1436" y="158" width="28" height="10" rx="5" fill="#ffffff" opacity="0.25"/>
+  <!-- ring -->
+  <circle cx="1150" cy="285" r="36" fill="none" stroke="#9fd8e8" stroke-width="11" opacity="0.85"/>
+  <circle cx="1150" cy="285" r="36" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.2"/>
+  <!-- pointer reticle -->
+  <g stroke="#ffffff" stroke-width="3" opacity="0.7">
+    <circle cx="1400" cy="300" r="16" fill="none"/>
+    <line x1="1400" y1="276" x2="1400" y2="284"/>
+    <line x1="1400" y1="316" x2="1400" y2="324"/>
+    <line x1="1376" y1="300" x2="1384" y2="300"/>
+    <line x1="1416" y1="300" x2="1424" y2="300"/>
+  </g>
+
+  <!-- kicker -->
+  <text x="90" y="135" font-family="'Segoe UI', Arial, sans-serif" font-size="20" font-weight="600" letter-spacing="5" fill="#9fd8e8">IETE HACKATHON · HEALTHCARE &amp; ASSISTIVE TECHNOLOGY</text>
+
+  <!-- title -->
+  <text x="86" y="228" font-family="'Segoe UI', Arial, sans-serif" font-size="86" font-weight="800" letter-spacing="2" fill="url(#titleGrad)">MotionForge</text>
+
+  <!-- tagline -->
+  <text x="90" y="282" font-family="'Segoe UI', Arial, sans-serif" font-size="28" font-weight="400" fill="#eaf4fb">A browser-based, webcam-controlled 2.5D motor-practice playground</text>
+
+  <!-- core loop pills -->
+  <g font-family="'Segoe UI', Arial, sans-serif" font-size="17" font-weight="600">
+    <rect x="90" y="318" width="86" height="38" rx="19" fill="#ffffff" opacity="0.12"/>
+    <text x="133" y="342" text-anchor="middle" fill="#eaf4fb">Learn</text>
+    <text x="196" y="342" text-anchor="middle" fill="#9fd8e8">→</text>
+    <rect x="216" y="318" width="80" height="38" rx="19" fill="#ffffff" opacity="0.12"/>
+    <text x="256" y="342" text-anchor="middle" fill="#eaf4fb">Move</text>
+    <text x="316" y="342" text-anchor="middle" fill="#9fd8e8">→</text>
+    <rect x="336" y="318" width="76" height="38" rx="19" fill="#ffffff" opacity="0.12"/>
+    <text x="374" y="342" text-anchor="middle" fill="#eaf4fb">Play</text>
+    <text x="432" y="342" text-anchor="middle" fill="#9fd8e8">→</text>
+    <rect x="452" y="318" width="142" height="38" rx="19" fill="#ffffff" opacity="0.12"/>
+    <text x="523" y="342" text-anchor="middle" fill="#eaf4fb">Get feedback</text>
+    <text x="614" y="342" text-anchor="middle" fill="#9fd8e8">→</text>
+    <rect x="634" y="318" width="98" height="38" rx="19" fill="#ffffff" opacity="0.12"/>
+    <text x="683" y="342" text-anchor="middle" fill="#eaf4fb">Improve</text>
+  </g>
+</svg>
