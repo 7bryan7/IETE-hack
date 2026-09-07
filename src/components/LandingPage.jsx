@@ -1,115 +1,127 @@
-import React from 'react';
-import { Play, Sparkles, Target, Hand, ArrowRightLeft, ShieldAlert, Award } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import Icons from './landing/Icons.jsx';
+import LandingHeader from './landing/LandingHeader.jsx';
+import Nav from './landing/Nav.jsx';
+import Hero from './landing/Hero.jsx';
+import GameChallenges from './landing/GameChallenges.jsx';
+import CameraSpotlight from './landing/CameraSpotlight.jsx';
+import HowItWorks from './landing/HowItWorks.jsx';
+import AssistiveTechSection from './landing/AssistiveTechSection.jsx';
+import LandingFooter from './landing/LandingFooter.jsx';
+import FactsModal from './landing/FactsModal.jsx';
+import Popup from './landing/Popup.jsx';
+import CookieConsent from './landing/CookieConsent.jsx';
+import FloatingCtas from './landing/FloatingCtas.jsx';
 
-export default function LandingPage({ onStartClick, onCalibrateClick }) {
+import '../styles/base.css';
+import '../styles/home.css';
+import '../styles/landing.css';
+
+export default function LandingPage({ onStartClick, onCalibrateClick, onSelectLevel, onOpenMap }) {
+  const [navOpen, setNavOpen] = useState(false);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [factsOpen, setFactsOpen] = useState(false);
+  const [cookiePrefsOpen, setCookiePrefsOpen] = useState(false);
+
+  // Body lock + nav classes
+  useEffect(() => {
+    const locked = navOpen || popupOpen || factsOpen;
+    document.body.classList.toggle('is-locked', locked);
+    document.body.classList.toggle('is-nav-open', navOpen);
+  }, [navOpen, popupOpen, factsOpen]);
+
+  // has-dom-ready on <html> for animations
+  useEffect(() => {
+    document.documentElement.classList.add('has-dom-ready');
+    return () => {
+      document.documentElement.classList.remove('has-dom-ready');
+    };
+  }, []);
+
+  const openFacts = useCallback(() => setFactsOpen(true), []);
+  const openVideo = useCallback(() => setPopupOpen(true), []);
+
+  const handleStartGame = useCallback((target = 'menu') => {
+    if (target === 'worlds' || target === 'forest') {
+      if (onStartClick) onStartClick();
+    } else if (target === 'calibration') {
+      if (onCalibrateClick) onCalibrateClick();
+    } else if (target === 'game_reach') {
+      if (onSelectLevel) onSelectLevel(1);
+      else if (onCalibrateClick) onCalibrateClick();
+    } else if (target === 'game_catch') {
+      if (onSelectLevel) onSelectLevel(2);
+      else if (onCalibrateClick) onCalibrateClick();
+    } else if (target === 'game_transfer') {
+      if (onSelectLevel) onSelectLevel(3);
+      else if (onCalibrateClick) onCalibrateClick();
+    } else if (target === 'game_sequence') {
+      if (onSelectLevel) onSelectLevel(4);
+      else if (onCalibrateClick) onCalibrateClick();
+    } else {
+      if (onOpenMap) onOpenMap();
+      else if (onCalibrateClick) onCalibrateClick();
+    }
+  }, [onStartClick, onCalibrateClick, onSelectLevel, onOpenMap]);
+
   return (
-    <div className="landing-page">
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-badge">
-          <Sparkles size={16} />
-          <span>Interactive Computer Vision Gaming</span>
-        </div>
+    <div className="mf-landing">
+      {/* Liquid morphing background blobs */}
+      <div className="mf-blob-bg mf-blob-1" aria-hidden="true" />
+      <div className="mf-blob-bg mf-blob-2" aria-hidden="true" />
+      <div className="mf-blob-bg mf-blob-3" aria-hidden="true" />
 
-        <h1 className="hero-title">
-          MotionForge <span className="hand-emoji">🖐️</span>
-        </h1>
-        <p className="hero-subtitle">Turn Movement Into Play.</p>
+      {/* Modals & Popups */}
+      <Popup open={popupOpen} onClose={() => setPopupOpen(false)} />
+      <FactsModal open={factsOpen} onClose={() => setFactsOpen(false)} />
+      <CookieConsent open={cookiePrefsOpen} onClose={() => setCookiePrefsOpen(false)} />
 
-        <p className="hero-description">
-          An interactive webcam-based game that helps children practice hand-eye coordination, 
-          motor planning, hand-to-hand transfer, and sequential physical activities through fun real-time challenges.
-        </p>
+      {/* Top Header */}
+      <LandingHeader
+        onNavToggle={() => setNavOpen((v) => !v)}
+        onStartGame={handleStartGame}
+      />
 
-        <div className="hero-actions">
-          <button className="btn btn-primary btn-hero" onClick={onStartClick}>
-            <Sparkles size={22} /> Explore Open Worlds
-          </button>
-          <button className="btn btn-primary btn-hero" onClick={onCalibrateClick}>
-            <Play size={22} fill="currentColor" /> Start Playing Now
-          </button>
-          <a href="#how-it-works" className="btn btn-secondary btn-hero">
-            How It Works
-          </a>
-        </div>
-      </section>
+      {/* Slide Navigation Drawer */}
+      <Nav
+        open={navOpen}
+        onClose={() => setNavOpen(false)}
+        onShowCookiePrefs={() => setCookiePrefsOpen(true)}
+        onOpenFacts={openFacts}
+        onStartGame={handleStartGame}
+      />
 
-      {/* Feature Cards Section */}
-      <section id="how-it-works" className="features-section">
-        <h2 className="section-title">Designed for Fun & Coordination 🚀</h2>
+      {/* Floating Action Buttons */}
+      <FloatingCtas onOpenFacts={openFacts} />
 
-        <div className="features-grid">
-          <div className="feature-card">
-            <div className="feature-icon cyan">
-              <Hand size={32} />
-            </div>
-            <h3>Real-Time Hand Tracking</h3>
-            <p>
-              Tracks up to two hands simultaneously using browser AI computer vision. 
-              No controllers or extra sensors required!
-            </p>
-          </div>
+      {/* Main Landing Content */}
+      <main>
+        <Hero
+          onStartGame={handleStartGame}
+          onOpenFacts={openFacts}
+        />
 
-          <div className="feature-card purple">
-            <div className="feature-icon purple">
-              <Target size={32} />
-            </div>
-            <h3>Interactive Movement Games</h3>
-            <p>
-              Engaging missions: reach dynamic targets, pinch & catch virtual objects, 
-              transfer items between hands, and solve spatial sequences.
-            </p>
-          </div>
+        <GameChallenges onStartGame={handleStartGame} />
 
-          <div className="feature-card emerald">
-            <div className="feature-icon emerald">
-              <Award size={32} />
-            </div>
-            <h3>Performance Insights</h3>
-            <p>
-              Calculates accuracy %, completion time, movement trails, and coordination scores 
-              after every round to encourage steady improvement.
-            </p>
-          </div>
-        </div>
-      </section>
+        <CameraSpotlight onStartGame={handleStartGame} />
 
-      {/* Game Cards Preview */}
-      <section className="games-preview-section">
-        <h2 className="section-title">Explore 4 Active Missions 🎮</h2>
-        <div className="preview-grid">
-          <div className="preview-card">
-            <div className="preview-badge">Mission 1</div>
-            <h4>🎯 Reach Challenge</h4>
-            <p>Touch random targets quickly with your index fingertip.</p>
-          </div>
-          <div className="preview-card">
-            <div className="preview-badge">Mission 2</div>
-            <h4>🖐️ Catch Challenge</h4>
-            <p>Pinch fingers together to catch floating stars, fruits, and bubbles.</p>
-          </div>
-          <div className="preview-card">
-            <div className="preview-badge">Mission 3</div>
-            <h4>🔄 Hand Transfer</h4>
-            <p>Grab an object with one hand and pass it smoothly to the other hand.</p>
-          </div>
-          <div className="preview-card">
-            <div className="preview-badge">Mission 4</div>
-            <h4>🧩 Sequence Challenge</h4>
-            <p>Follow step-by-step motor planning tasks in exact order.</p>
-          </div>
-        </div>
-      </section>
+        <HowItWorks />
 
-      {/* Safety Disclaimer Banner */}
-      <section className="disclaimer-banner">
-        <ShieldAlert size={20} className="disclaimer-icon" />
-        <p>
-          <strong>Safety & Usage Disclaimer:</strong> MotionForge provides game-based movement activities 
-          and performance metrics. It is not a medical diagnostic or rehabilitation tool.
-        </p>
-      </section>
+        <AssistiveTechSection
+          onStartGame={handleStartGame}
+          onOpenFacts={openFacts}
+        />
+      </main>
+
+      {/* Cheerful Kids Footer */}
+      <LandingFooter
+        onStartGame={handleStartGame}
+        onOpenFacts={openFacts}
+        onShowCookiePrefs={() => setCookiePrefsOpen(true)}
+      />
+
+      {/* SVG Icon Sprite */}
+      <Icons />
     </div>
   );
 }
-

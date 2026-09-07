@@ -1,4 +1,4 @@
-﻿import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import LandingPage from './components/LandingPage';
 import { lazy, Suspense, useEffect } from 'react';
 import WorldMenu from './forest/WorldMenu';
@@ -33,7 +33,7 @@ export default function App() {
     setProgress(update.progress); setSaved(update.saved);
   };
   return <div className="app-shell">
-    {view === 'landing' && <LandingPage onStartClick={() => navigate('worlds')} onCalibrateClick={() => setView('calibration')} />}
+    {view === 'landing' && <LandingPage onStartClick={() => navigate('worlds')} onCalibrateClick={() => setView('calibration')} onSelectLevel={select} onOpenMap={() => setView('map')} />}
     {view === 'worlds' && <WorldMenu onForest={() => navigate('forest')} onMissions={() => navigate('map')} onHome={() => navigate('landing')} />}
     {view === 'forest' && <Suspense fallback={<main className="world-menu"><p role="status">Opening the forest…</p></main>}><ForestWorld onExit={() => navigate('worlds')} /></Suspense>}
     {view === 'calibration' && <Calibration videoRef={videoRef} onCalibrationComplete={() => setView('map')} onSkip={() => setView('map')} />}
