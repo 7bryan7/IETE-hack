@@ -292,10 +292,213 @@ function TrailMarker({ checkpoint, run }) {
   </group>;
 }
 
-function Fireflies({ reducedMotion }) {
-  const group = useRef();
-  useFrame(({ clock }) => { if (!reducedMotion) { group.current.position.y = Math.sin(clock.elapsedTime * 0.6) * 0.15; group.current.rotation.y = Math.sin(clock.elapsedTime * 0.1) * 0.04; } });
-  return <group ref={group}>{Array.from({ length: 16 }, (_, i) => <mesh key={i} position={[Math.sin(i * 12.3) * 8, 0.8 + (i % 4) * 0.6, Math.cos(i * 4.6) * 6 - 2]}><sphereGeometry args={[0.025, 4, 4]} /><meshBasicMaterial color="#fff8ca" /></mesh>)}</group>;
+const DRAGONFLY_CONFIGS = [
+  { id: 'azure', name: 'Azure Darner', initialPos: [0, 1.8, -4.5], radiusX: 2.2, radiusZ: 1.6, speed: 0.85, phase: 0.0, color: '#38bdf8', eyeColor: '#00ffff', wingColor: '#bae6fd', scale: 1.1 },
+  { id: 'emerald', name: 'Emerald Glider', initialPos: [-3.2, 1.9, 0.5], radiusX: 2.5, radiusZ: 1.8, speed: 0.75, phase: 1.4, color: '#4ade80', eyeColor: '#86efac', wingColor: '#dcfce7', scale: 1.05 },
+  { id: 'golden', name: 'Golden Skimmer', initialPos: [3.5, 2.0, 1.0], radiusX: 2.4, radiusZ: 2.0, speed: 0.9, phase: 2.8, color: '#fbbf24', eyeColor: '#fde047', wingColor: '#fef3c7', scale: 1.15 },
+  { id: 'ruby', name: 'Ruby Chaser', initialPos: [5.2, 2.1, -3.2], radiusX: 2.0, radiusZ: 1.5, speed: 0.8, phase: 4.2, color: '#f87171', eyeColor: '#fca5a5', wingColor: '#fee2e2', scale: 1.0 },
+  { id: 'amethyst', name: 'Amethyst Phantom', initialPos: [-4.5, 1.7, -1.2], radiusX: 1.8, radiusZ: 1.4, speed: 0.7, phase: 5.1, color: '#c084fc', eyeColor: '#d8b4fe', wingColor: '#f3e8ff', scale: 1.08 },
+];
+
+function Dragonfly({ config, run, reducedMotion }) {
+  const rootRef = useRef();
+  const wingFL = useRef(), wingFR = useRef(), wingBL = useRef(), wingBR = useRef();
+  const haloRef = useRef();
+
+  const state = useRef({
+    pos: new Vector3(...config.initialPos),
+    evadeTimer: 0,
+    evadeDir: new Vector3(0, 1, 0),
+    caughtTimer: 0,
+    baseY: config.initialPos[1],
+    phase: config.phase || 0,
+  });
+
+  useFrame(({ clock, camera, size }, delta) => {
+    if (!rootRef.current) return;
+    const st = state.current;
+    const t = clock.elapsedTime + st.phase;
+    const deltaClamped = Math.min(delta, 0.05);
+
+    // 1. Natural cruising orbit with gentle hovering & sinusoidal wave
+    const speed = (config.speed || 0.8) * (st.evadeTimer > 0 ? 2.6 : 1.0);
+    const patrolX = config.initialPos[0] + Math.sin(t * speed) * config.radiusX + Math.cos(t * 0.4) * 0.5;
+    const patrolZ = config.initialPos[2] + Math.cos(t * speed) * config.radiusZ + Math.sin(t * 0.5) * 0.4;
+    const patrolY = st.baseY + Math.sin(t * 1.9) * 0.35 + Math.cos(t * 0.7) * 0.18;
+
+    // 2. Project 3D position to camera view to detect touch/grab from player hands or mouse
+    const proj = st.pos.clone().project(camera);
+    const screenX = (proj.x + 1) / 2;
+    const screenY = (1 - proj.y) / 2;
+    const isVisible = proj.z > -1 && proj.z < 1 && Math.abs(proj.x) < 1.15 && Math.abs(proj.y) < 1.15;
+
+    // 3. Proximity detection with all active pointers (hands / mouse)
+    const s = run.current;
+    const pointers = s?.pointers || [];
+    const aspect = size.width / size.height;
+
+    let nearestDist = 999;
+    let nearestPointer = null;
+
+    if (isVisible) {
+      for (const p of pointers) {
+        const d = Math.hypot((p.x - screenX) * aspect, p.y - screenY);
+        if (d < nearestDist) {
+          nearestDist = d;
+          nearestPointer = p;
+        }
+      }
+    }
+
+    // 4. Reactive Touch & Grab AI
+    if (nearestPointer && nearestDist < 0.20 && st.caughtTimer <= 0) {
+      if (nearestPointer.pinch && nearestDist < 0.10) {
+        // Pinch caught!
+        st.caughtTimer = 2.2;
+        if (s.adventure) {
+          s.adventure.dragonfliesCaught = (s.adventure.dragonfliesCaught || 0) + 1;
+          s.adventure.stars = (s.adventure.stars || 0) + 1;
+          s.stars = s.adventure.stars;
+          s.feedback = `Dragonfly Caught! ✨ (${Math.min(5, s.adventure.dragonfliesCaught)}/5)`;
+          s.feedbackUntil = (s.elapsed || 0) + 2600;
+          s.adventure.novaMood = 'celebrating';
+          s.adventure.novaMessage = `Splendid catch! You caught the ${config.name}! ⭐`;
+        }
+      } else {
+        // Hand is approaching/touching: Evade & dart away playfully!
+        st.evadeTimer = 0.9;
+        const dx = (screenX - nearestPointer.x) * 3.5 + Math.sin(t * 8) * 1.2;
+        const dy = (nearestPointer.y - screenY) * 2.5 + 0.9;
+        const dz = Math.cos(t * 6) * 1.5 - 0.5;
+        st.evadeDir.set(dx, dy, dz).normalize();
+      }
+    }
+
+    // 5. Position blending & target computation
+    let targetX = patrolX;
+    let targetY = patrolY;
+    let targetZ = patrolZ;
+
+    if (st.caughtTimer > 0) {
+      st.caughtTimer -= deltaClamped;
+      // Joyful celebratory spiral
+      targetY += (2.2 - st.caughtTimer) * 1.6;
+      targetX += Math.sin(clock.elapsedTime * 14) * 0.45;
+      targetZ += Math.cos(clock.elapsedTime * 14) * 0.45;
+    } else if (st.evadeTimer > 0) {
+      st.evadeTimer -= deltaClamped;
+      targetX += st.evadeDir.x * 2.4;
+      targetY += st.evadeDir.y * 1.6;
+      targetZ += st.evadeDir.z * 1.8;
+    }
+
+    // Exponential smoothing for natural flight transitions
+    const followSpeed = st.evadeTimer > 0 ? 11 : 3.8;
+    const alpha = 1 - Math.exp(-followSpeed * deltaClamped);
+    const prevPos = st.pos.clone();
+    st.pos.x += (targetX - st.pos.x) * alpha;
+    st.pos.y += (targetY - st.pos.y) * alpha;
+    st.pos.z += (targetZ - st.pos.z) * alpha;
+
+    rootRef.current.position.copy(st.pos);
+
+    // 6. Look in direction of flight (natural banking and pitch)
+    const moveDir = st.pos.clone().sub(prevPos);
+    if (moveDir.lengthSq() > 0.00001) {
+      rootRef.current.lookAt(st.pos.clone().add(moveDir));
+    }
+
+    // 7. Rapid High-Frequency Wing Flutter (vibrating double wings)
+    if (!reducedMotion) {
+      const flutterFreq = st.evadeTimer > 0 ? 64 : 42;
+      const flap1 = Math.sin(clock.elapsedTime * flutterFreq) * 0.45;
+      const flap2 = Math.sin(clock.elapsedTime * flutterFreq + 0.6) * 0.40;
+      if (wingFL.current) wingFL.current.rotation.z = flap1;
+      if (wingFR.current) wingFR.current.rotation.z = -flap1;
+      if (wingBL.current) wingBL.current.rotation.z = flap2;
+      if (wingBR.current) wingBR.current.rotation.z = -flap2;
+    }
+
+    // 8. Reactive glow pulse
+    if (haloRef.current) {
+      haloRef.current.material.opacity = st.caughtTimer > 0 ? 0.6 : st.evadeTimer > 0 ? 0.38 : 0.14;
+    }
+  });
+
+  return (
+    <group ref={rootRef} scale={config.scale || 1}>
+      {/* Head */}
+      <mesh position={[0, 0, 0.32]}>
+        <sphereGeometry args={[0.08, 8, 8]} />
+        <meshStandardMaterial color={config.color} roughness={0.2} metalness={0.5} />
+      </mesh>
+      {/* Large Glowing Compound Eyes */}
+      <mesh position={[-0.055, 0.03, 0.35]}>
+        <sphereGeometry args={[0.042, 6, 6]} />
+        <meshStandardMaterial color={config.eyeColor} emissive={config.eyeColor} emissiveIntensity={0.9} />
+      </mesh>
+      <mesh position={[0.055, 0.03, 0.35]}>
+        <sphereGeometry args={[0.042, 6, 6]} />
+        <meshStandardMaterial color={config.eyeColor} emissive={config.eyeColor} emissiveIntensity={0.9} />
+      </mesh>
+      {/* Thorax */}
+      <mesh position={[0, 0, 0.18]} scale={[1, 1.15, 1.5]}>
+        <sphereGeometry args={[0.085, 8, 8]} />
+        <meshStandardMaterial color={config.color} roughness={0.2} metalness={0.7} />
+      </mesh>
+      {/* Segmented Slender Abdomen */}
+      <mesh position={[0, 0.01, -0.24]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.024, 0.048, 0.72, 6]} />
+        <meshStandardMaterial color={config.color} emissive={config.color} emissiveIntensity={0.35} />
+      </mesh>
+      {/* 4 Translucent Shimmering Wings (Forewings & Hindwings) */}
+      <group position={[-0.04, 0.05, 0.22]} ref={wingFL}>
+        <mesh position={[-0.34, 0, 0.05]} rotation={[0, 0, -0.12]}>
+          <planeGeometry args={[0.66, 0.17]} />
+          <meshStandardMaterial color={config.wingColor} transparent opacity={0.7} side={2} roughness={0.1} metalness={0.8} depthWrite={false} />
+        </mesh>
+      </group>
+      <group position={[0.04, 0.05, 0.22]} ref={wingFR}>
+        <mesh position={[0.34, 0, 0.05]} rotation={[0, 0, 0.12]}>
+          <planeGeometry args={[0.66, 0.17]} />
+          <meshStandardMaterial color={config.wingColor} transparent opacity={0.7} side={2} roughness={0.1} metalness={0.8} depthWrite={false} />
+        </mesh>
+      </group>
+      <group position={[-0.04, 0.04, 0.12]} ref={wingBL}>
+        <mesh position={[-0.3, 0, -0.04]} rotation={[0, 0, -0.18]}>
+          <planeGeometry args={[0.58, 0.15]} />
+          <meshStandardMaterial color={config.wingColor} transparent opacity={0.7} side={2} roughness={0.1} metalness={0.8} depthWrite={false} />
+        </mesh>
+      </group>
+      <group position={[0.04, 0.04, 0.12]} ref={wingBR}>
+        <mesh position={[0.3, 0, -0.04]} rotation={[0, 0, 0.18]}>
+          <planeGeometry args={[0.58, 0.15]} />
+          <meshStandardMaterial color={config.wingColor} transparent opacity={0.7} side={2} roughness={0.1} metalness={0.8} depthWrite={false} />
+        </mesh>
+      </group>
+      {/* Magical Glow Halo */}
+      <mesh ref={haloRef}>
+        <sphereGeometry args={[0.38, 8, 8]} />
+        <meshBasicMaterial color={config.color} transparent opacity={0.15} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
+function Dragonflies({ run, reducedMotion }) {
+  return (
+    <group>
+      {DRAGONFLY_CONFIGS.map(cfg => (
+        <Dragonfly key={cfg.id} config={cfg} run={run} reducedMotion={reducedMotion} />
+      ))}
+      {Array.from({ length: 12 }, (_, i) => (
+        <mesh key={i} position={[Math.sin(i * 12.3) * 7.5, 0.9 + (i % 4) * 0.5, Math.cos(i * 4.6) * 5.5 - 2]}>
+          <sphereGeometry args={[0.025, 4, 4]} />
+          <meshBasicMaterial color="#fff8ca" />
+        </mesh>
+      ))}
+    </group>
+  );
 }
 
 export default function ForestScene({ run, readInput, onSnapshot, reducedMotion }) {
@@ -342,6 +545,6 @@ export default function ForestScene({ run, readInput, onSnapshot, reducedMotion 
     <NovaSpirit run={run} reducedMotion={reducedMotion} />
     {checkpoints.map(p => <TrailMarker key={p.id} checkpoint={p} run={run} />)}
     {objectDefinitions.map(o => <React.Fragment key={o.id}><ForestObject definition={o} run={run} reducedMotion={reducedMotion} /><ForestTarget definition={o} run={run} /></React.Fragment>)}
-    <Fireflies reducedMotion={reducedMotion} />
+    <Dragonflies run={run} reducedMotion={reducedMotion} />
   </>;
 }
