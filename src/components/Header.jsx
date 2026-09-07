@@ -18,7 +18,7 @@ export default function Header({
   return (
     <header className="game-header">
       <div className="header-brand" onClick={onHomeClick} title="Return to Menu">
-        <span className="brand-logo">🖐️</span>
+        <img className="brand-logo" src={`${import.meta.env.BASE_URL}assets/motionforge-logo.png`} alt="" width="36" height="36" />
         <span className="brand-title">MotionForge</span>
         {gameTitle && <span className="game-title-tag">| {gameTitle}</span>}
       </div>

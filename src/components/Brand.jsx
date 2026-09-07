@@ -2,7 +2,12 @@ import React from 'react';
 
 export default function Brand() {
   return <span className="mf-brand">
-    <span className="mf-brand-icon" aria-hidden="true">🖐️</span>
-    <span>MOTION<span className="mf-brand-accent">FORGE</span></span>
+    <img
+      className="mf-brand-image"
+      src={`${import.meta.env.BASE_URL}assets/motionforge-logo.png`}
+      alt="MotionForge — Move, Play, Grow"
+      width="659"
+      height="652"
+    />
   </span>;
 }

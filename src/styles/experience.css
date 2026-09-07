@@ -8,8 +8,24 @@
   letter-spacing: .04em;
   white-space: nowrap;
 }
-.mf-brand-icon { font-size: 22px; }
-.mf-brand-accent { color: var(--green); }
+.mf-brand-image {
+  display: block;
+  width: 112px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+.mf-footer-brand .mf-brand-image { width: 200px; height: 160px; }
+.mf-landing .mf-hero { padding-top: 10rem; }
+.mf-landing main > section[id] { scroll-margin-top: 150px; }
+@media (max-width: 1000px) {
+  .mf-landing .mf-hero { padding-top: 14rem; }
+  .mf-landing main > section[id] { scroll-margin-top: 205px; }
+}
+@media (max-width: 540px) {
+  .mf-landing .mf-hero { padding-top: 16rem; }
+  .mf-landing main > section[id] { scroll-margin-top: 235px; }
+}
 .experience-header {
   width: 100%;
   max-width: 1280px;

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Icons from './landing/Icons.jsx';
 import LandingHeader from './landing/LandingHeader.jsx';
-import Nav from './landing/Nav.jsx';
 import Hero from './landing/Hero.jsx';
 import GameChallenges from './landing/GameChallenges.jsx';
 import CameraSpotlight from './landing/CameraSpotlight.jsx';
@@ -14,20 +13,18 @@ import CookieConsent from './landing/CookieConsent.jsx';
 import FloatingCtas from './landing/FloatingCtas.jsx';
 
 export default function LandingPage({ onStartClick, onCalibrateClick, onSelectLevel, onOpenMap }) {
-  const [navOpen, setNavOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
   const [factsOpen, setFactsOpen] = useState(false);
   const [cookiePrefsOpen, setCookiePrefsOpen] = useState(false);
 
-  // Body lock + nav classes
+  // Keep the page still while a modal is open.
   useEffect(() => {
-    const locked = navOpen || popupOpen || factsOpen;
+    const locked = popupOpen || factsOpen;
     document.body.classList.toggle('is-locked', locked);
-    document.body.classList.toggle('is-nav-open', navOpen);
     return () => {
-      document.body.classList.remove('is-locked', 'is-nav-open');
+      document.body.classList.remove('is-locked');
     };
-  }, [navOpen, popupOpen, factsOpen]);
+  }, [popupOpen, factsOpen]);
 
   // has-dom-ready on <html> for animations
   useEffect(() => {
@@ -77,16 +74,6 @@ export default function LandingPage({ onStartClick, onCalibrateClick, onSelectLe
 
       {/* Top Header */}
       <LandingHeader
-        onNavToggle={() => setNavOpen((v) => !v)}
-        onStartGame={handleStartGame}
-      />
-
-      {/* Slide Navigation Drawer */}
-      <Nav
-        open={navOpen}
-        onClose={() => setNavOpen(false)}
-        onShowCookiePrefs={() => setCookiePrefsOpen(true)}
-        onOpenFacts={openFacts}
         onStartGame={handleStartGame}
       />
 

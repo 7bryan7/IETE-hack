@@ -1,4 +1,5 @@
 import React from 'react';
+import Brand from '../Brand';
 
 export default function LandingFooter({ onStartGame, onOpenFacts, onShowCookiePrefs }) {
   return (
@@ -6,7 +7,7 @@ export default function LandingFooter({ onStartGame, onOpenFacts, onShowCookiePr
       <div className="mf-footer-inner">
         <div>
           <div className="mf-footer-brand">
-            <span>🖐️</span> MOTION<span style={{ color: '#02AE90' }}>FORGE</span>
+            <Brand />
           </div>
           <p className="mf-footer-tagline">
             2.5D Motor-Practice Playground • Play, Move, Improve

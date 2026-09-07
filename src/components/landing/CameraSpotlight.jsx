@@ -35,10 +35,6 @@ export default function CameraSpotlight({ onStartGame }) {
 
         <div className="mf-camera-mockup">
           <div className="mf-camera-screen">
-            <span className="mf-camera-hand-icon">🖐️</span>
-            <div style={{ color: '#94A3B8', fontSize: '0.85rem', marginTop: '10px', fontFamily: 'Montserrat, sans-serif' }}>
-              MediaPipe Vision Ready
-            </div>
             <span className="mf-camera-pill">● Local Camera Stream Secure</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '14px', fontSize: '0.8rem', color: '#94A3B8' }}>
