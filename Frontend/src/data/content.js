@@ -1,53 +1,49 @@
 export const FACTS = [
-  'The sugar maple tree has existed in North America for more than 4,500 years.',
-  'Maple syrup is made from the sap of sugar maple trees.',
-  'Maple products are exported to more than 60 countries around the world.',
-  'In 2013, Canadian astronaut Chris Hadfield ate maple syrup in space',
-  'Every spring, the sugaring season lasts for about 20 days.',
-  'Quebec produces over 72% of all the maple syrup in the world.',
-  'Quebec maple syrup comes from 34 billion maple trees.',
-  'In 1536, Jacques Cartier and his crew became the first Europeans to taste maple sap.',
-  'In summertime, sugars are created through the process of photosynthesis in the leaves of the sugar maple',
-  'Maple syrup producers often work day and night to collect the maple sap and turn it into maple syrup.',
-  'The sugar maple and red maple are two tree species with the ability to convert starch to sugar.',
-  'Maple sap contains 46 molecules vital to the life of the tree.',
-  "Each year, maple forests capture an amount of carbon equivalent to what's produced by 290,000 cars.",
-  'North America has 13 maple tree species, including the sugar maple.',
-  'It has to freeze at night and thaw during the day for the maple sap to flow',
-  'In about 1676, our ancestors, the First Nations people, were the first to boil maple sap, using iron pots.',
-  'Maple syrup from Quebec is pure and 100% natural.',
-  "In the sugar shack, the maple syrup producer uses an evaporator to heat maple sap to a temperature of 103.5° C.",
-  'It takes an average of 40 litres of maple sap to make one litre of maple syrup.',
+  'MotionForge is a browser-based, webcam-controlled 2.5D motor-practice playground.',
+  'Core Loop: Learn → Move → Play → Get feedback → Improve.',
+  '100% Privacy: All computer vision runs locally in your browser. No webcam video or frames are ever stored or transmitted.',
+  'Pinch to Grab: Simply bring your thumb and index finger together to pick up virtual balls and blocks.',
+  'Smart Hysteresis: MotionForge uses dual grab & release thresholds to prevent objects from flickering or dropping prematurely.',
+  'Hand-Eye Coordination: The playground helps children and adults practice mapping hand gestures to 2.5D virtual objects.',
+  'Universal Mouse Fallback: If camera access is unavailable or lighting is low, you can switch seamlessly to mouse or touch controls.',
+  'Movement Efficiency: We compare your actual movement path against the direct path to measure fine motor coordination.',
+  'Transparent Feedback: All scores and metrics are encouraging gameplay achievements, not diagnostic or clinical labels.',
+  'Missions with Purpose: Practice sequential actions and spatial planning by placing the red ball into the basket.',
+  'Left & Right Awareness: The tracking adapter mirrors your movements intuitively and works with either hand.',
+  'Built with Care by Team Bug Eaters for the IETE Hackathon 2026 in Healthcare & Assistive Technology.',
+  'Offline Ready: Your practice history and personal bests stay safe in your browser on your device.',
+  'Short Grace Period: A 200ms grace window preserves your grab during brief tracking loss so you never lose control.',
+  'Free Exploration: Complete missions at your own pace or freely interact with all toys and objects across the room.',
 ];
 
-export const PUPILS_LINKS = [
-  { label: 'The Four Seasons', href: 'https://kids.maplefromcanada.ca/learn/seasons/' },
-  { label: 'The Ecosystem, the Fauna, the Flora', href: 'https://kids.maplefromcanada.ca/learn/ecosystem/' },
-  { label: 'The History of Maple Syrup', href: 'https://kids.maplefromcanada.ca/learn/history/' },
-  { label: 'Health and Sports', href: 'https://kids.maplefromcanada.ca/learn/health-sports/' },
-  { label: 'The Maple Producer', href: 'https://kids.maplefromcanada.ca/learn/producer/' },
-  { label: 'The Production of Maple Syrup', href: 'https://kids.maplefromcanada.ca/learn/production/' },
-  { label: 'The Stages of Maple', href: 'https://kids.maplefromcanada.ca/learn/the-stages-of-maple/' },
-  { label: 'The Chemistery of Maple', href: 'https://kids.maplefromcanada.ca/learn/the-chemistery-of-maple/' },
+export const EXPLORE_LINKS = [
+  { label: '2.5D Playroom Environment', href: '#playroom' },
+  { label: 'Red Ball & Basket Mission', href: '#mission' },
+  { label: 'Thumb-Index Pinch Gesture', href: '#tracking' },
+  { label: 'Tracking Smoothing & Grace Window', href: '#smoothing' },
+  { label: 'Universal Mouse & Touch Fallback', href: '#fallback' },
+  { label: 'Live HUD & Continuous Metrics', href: '#metrics' },
+  { label: 'Local-Only History (IndexedDB)', href: '#history' },
+  { label: 'Game Score Reward Formula', href: '#score' },
 ];
 
-export const CHEFS_LINKS = [
-  { label: 'All recipes', href: 'https://kids.maplefromcanada.ca/cook/recipes/' },
-  { label: 'Drink', href: 'https://kids.maplefromcanada.ca/cook/drink/' },
-  { label: 'Foods', href: 'https://kids.maplefromcanada.ca/cook/foods/' },
-  { label: 'Snacks', href: 'https://kids.maplefromcanada.ca/cook/snacks/' },
-  { label: 'Sweets', href: 'https://kids.maplefromcanada.ca/cook/sweets/' },
-  { label: 'Family Fun', href: 'https://kids.maplefromcanada.ca/cook/family/' },
+export const ASSISTIVE_TECH_LINKS = [
+  { label: 'Hand-Eye Coordination Practice', href: '#skills' },
+  { label: 'Movement Accuracy & Control', href: '#accuracy' },
+  { label: 'Spatial Planning & Sequential Goals', href: '#planning' },
+  { label: 'Left/Right Hand Motor Awareness', href: '#awareness' },
+  { label: 'Healthcare & Assistive Tech Domain', href: '#domain' },
+  { label: 'Team Bug Eaters — IETE Hackathon 2026', href: '#team' },
 ];
 
 export const SLIDES = [
   {
     id: 'c-home-section-12',
-    label: 'Educators',
-    eyebrow: 'Educators',
-    title: 'Educational Kit',
-    content: 'Tools to guide you through a complete learning module on maple.',
-    cta: { label: 'Teachers Section', href: 'https://kids.maplefromcanada.ca/teach/' },
+    label: 'Playroom',
+    eyebrow: '2.5D Environment',
+    title: 'Interactive Playroom',
+    content: 'A persistent 2.5D motor playground. Select, grab, move, and place objects like balls, blocks, baskets, and stars.',
+    cta: { label: 'Explore Playground', href: '#playroom' },
     buttonClass: 'u-bg-green',
     contentClass: 'u-bg-green',
     ctaClass: '-green-light',
@@ -64,11 +60,11 @@ export const SLIDES = [
   },
   {
     id: 'c-home-section-14',
-    label: 'Pupils',
-    eyebrow: 'Pupils',
-    title: 'The Encyclopedia of Maple',
-    content: 'A complete reference to the history of maple.',
-    cta: { label: 'Learn', href: 'https://kids.maplefromcanada.ca/learn/' },
+    label: 'Tracking',
+    eyebrow: 'Webcam & Gestures',
+    title: 'Camera Hand Control',
+    content: 'Move your hand in front of your webcam. Natural thumb-to-index pinch grabs objects, backed by our universal mouse fallback.',
+    cta: { label: 'Tracking Controls', href: '#tracking' },
     buttonClass: 'u-bg-red',
     contentClass: 'u-bg-red',
     ctaClass: '-red-light',
@@ -85,11 +81,11 @@ export const SLIDES = [
   },
   {
     id: 'c-home-section-16',
-    label: 'Junior Chefs',
-    eyebrow: 'Junior Chefs',
-    title: 'Recipes for Kids',
-    content: 'What will we make today? More than 200 recipes for beginners and junior chefs to try!',
-    cta: { label: 'Our Recipes', href: 'https://kids.maplefromcanada.ca/cook/' },
+    label: 'Feedback',
+    eyebrow: 'Continuous Metrics',
+    title: 'Performance & Progress',
+    content: 'Real-time feedback on movement efficiency, action accuracy, elapsed time, and errors. 100% private and stored locally.',
+    cta: { label: 'View Metrics', href: '#feedback' },
     buttonClass: 'u-bg-yellow',
     contentClass: 'u-bg-yellow',
     ctaClass: '-yellow-light',
@@ -116,5 +112,21 @@ export const HERO_DROPS = [
   { style: { top: '35%', right: '10%', width: '30px' }, delay: '1.83s', rotate: '96deg' },
 ];
 
-export const VIDEO_EMBED_HTML =
-  '<iframe title="Learning About Maple Syrup" width="200" height="113" src="https://www.youtube.com/embed/jGQu3MikEeE?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+export const VIDEO_EMBED_HTML = `
+  <div style="background: #ffffff; border-radius: 28px; padding: 36px 28px; text-align: center; max-width: 540px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.12); color: #2A2B2A;">
+    <div style="font-size: 48px; margin-bottom: 12px;">🖐️ ✨ 🎯</div>
+    <h3 style="font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; color: #EA9F0E; margin-bottom: 12px;">How MotionForge Works</h3>
+    <p style="font-family: 'Zilla Slab', serif; font-size: 18px; line-height: 1.5; color: #555; margin-bottom: 20px;">
+      MotionForge turns your ordinary webcam into an interactive motor-practice controller.
+    </p>
+    <div style="display: flex; flex-direction: column; gap: 12px; text-align: left; font-size: 15px; background: #fff9f0; padding: 18px; border-radius: 18px;">
+      <div><strong>1. Learn:</strong> Point your index finger to guide the glowing pointer across the playroom.</div>
+      <div><strong>2. Grab:</strong> Pinch your thumb and index finger together to pick up balls, blocks, and stars.</div>
+      <div><strong>3. Move & Place:</strong> Drag objects and release them inside targets like the toy basket.</div>
+      <div><strong>4. Feedback:</strong> Watch your movement efficiency and accuracy improve on every trial!</div>
+    </div>
+    <div style="margin-top: 20px; font-size: 13px; color: #888;">
+      🔒 100% In-Browser · No video is ever recorded or uploaded · Works with Mouse too
+    </div>
+  </div>
+`;

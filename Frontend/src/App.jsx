@@ -76,6 +76,7 @@ export default function App() {
         onClose={() => setNavOpen(false)}
         onShowCookiePrefs={() => setCookiePrefsOpen(true)}
         onOpenFacts={openFacts}
+        onOpenVideo={openVideo}
       />
 
       <FloatingCtas onOpenFacts={openFacts} />

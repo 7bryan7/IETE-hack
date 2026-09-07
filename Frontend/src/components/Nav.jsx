@@ -1,25 +1,25 @@
 import { useEffect, useState } from 'react';
 import { Icon } from './Icons.jsx';
-import { PUPILS_LINKS, CHEFS_LINKS } from '../data/content.js';
+import { EXPLORE_LINKS, ASSISTIVE_TECH_LINKS } from '../data/content.js';
 
 const SUBMENUS = [
   {
     id: 'c-menu-section-14',
-    eyebrow: 'Pupils',
-    titleLines: ['The Encyclopedia', 'of Maple'],
+    eyebrow: 'Explore',
+    titleLines: ['Playroom &', 'Interaction'],
     backClass: '-red-dark',
-    links: PUPILS_LINKS,
+    links: EXPLORE_LINKS,
   },
   {
     id: 'c-menu-section-16',
-    eyebrow: 'Junior Chefs',
-    titleLines: ['Recipes', 'for Kids'],
+    eyebrow: 'Skills',
+    titleLines: ['Assistive Tech &', 'Coordination'],
     backClass: '-red',
-    links: CHEFS_LINKS,
+    links: ASSISTIVE_TECH_LINKS,
   },
 ];
 
-export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts }) {
+export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts, onOpenVideo }) {
   const [submenu, setSubmenu] = useState(null);
 
   useEffect(() => {
@@ -39,10 +39,17 @@ export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts }) {
       <div className="c-nav_background" />
       <ul className="c-nav_list">
         <li className="c-nav_list_item">
-          <a href="https://kids.maplefromcanada.ca/teach/" className="c-nav_list_item_button">
-            <span>Educators</span>Educational
-            <br />Kit
-          </a>
+          <button
+            className="c-nav_list_item_button"
+            type="button"
+            onClick={() => {
+              onClose();
+              if (onOpenVideo) onOpenVideo();
+            }}
+          >
+            <span>Playground</span>2.5D Motor
+            <br />Playground
+          </button>
         </li>
         <li className="c-nav_list_item">
           <button
@@ -50,8 +57,8 @@ export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts }) {
             type="button"
             onClick={() => setSubmenu('c-menu-section-14')}
           >
-            <span>Pupils</span>The Encyclopedia
-            <br />of Maple
+            <span>Explore</span>Playroom &
+            <br />Interaction
           </button>
         </li>
         <li className="c-nav_list_item">
@@ -60,35 +67,43 @@ export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts }) {
             type="button"
             onClick={() => setSubmenu('c-menu-section-16')}
           >
-            <span>Junior Chefs</span>Recipes
-            <br />for Kids
+            <span>Skills</span>Assistive Tech &
+            <br />Coordination
           </button>
         </li>
       </ul>
       <div className="c-nav_footer">
         <aside className="c-nav_lang_list">
-          <a href="https://jeunesse.erableduquebec.ca/" className="c-nav_lang u-label" aria-label="Français">
-            fr
-          </a>
+          <span className="c-nav_lang u-label" title="IETE Hackathon 2026">
+            IETE
+          </span>
         </aside>
         <aside className="c-nav_cookie-consent_list">
           <button type="button" className="c-nav_cookie-consent" onClick={onShowCookiePrefs}>
-            Manage my cookie preferences
+            Privacy & Local Storage Info
           </button>
         </aside>
         <div className="c-nav_footer_ctas">
-          <button type="button" className="c-nav_footer_ctas_item" onClick={onOpenFacts} aria-label="Learn the facts of maple">
+          <button type="button" className="c-nav_footer_ctas_item" onClick={onOpenFacts} aria-label="Learn facts about MotionForge">
             <span className="c-nav_footer_icon">
               <Icon id="i-fact" viewBox="0 0 144 144" />
             </span>
             <span className="u-label">Did you know?</span>
           </button>
-          <a href="https://kids.maplefromcanada.ca/quiz/" className="c-nav_footer_ctas_item" aria-label="Take the maple quiz">
+          <button
+            type="button"
+            className="c-nav_footer_ctas_item"
+            onClick={() => {
+              onClose();
+              onOpenFacts();
+            }}
+            aria-label="Assistive tech insights"
+          >
             <span className="c-nav_footer_icon">
               <Icon id="i-quiz" />
             </span>
-            <span className="u-label">Maple Quiz</span>
-          </a>
+            <span className="u-label">Motor Insights</span>
+          </button>
         </div>
       </div>
       <div className="c-nav_secondary">
@@ -120,7 +135,7 @@ export default function Nav({ open, onClose, onShowCookiePrefs, onOpenFacts }) {
               <ul className="c-nav_secondary_menu_list">
                 {menu.links.map((link) => (
                   <li key={link.href} className="c-nav_secondary_menu_list_item">
-                    <a href={link.href}>
+                    <a href={link.href} onClick={onClose}>
                       {link.label}
                       <span className="c-nav_secondary_menu_list_arrow">
                         <Icon id="i-arrow-long-right" />

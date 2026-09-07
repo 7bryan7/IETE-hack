@@ -2,7 +2,7 @@ import { Icon } from '../Icons.jsx';
 import LiquidButton from '../LiquidButton.jsx';
 
 /**
- * Rotating-text circular CTA ("Take a trip to the wonderful world of maple!").
+ * Rotating-text circular CTA ("Explore the 2.5D Motor Playground · MotionForge").
  * Structure matches the original: button > wrap > icon (text path + play).
  */
 export default function CircleButton({ onOpenVideo }) {
@@ -13,7 +13,7 @@ export default function CircleButton({ onOpenVideo }) {
         color="#EA9F0E"
         type="button"
         onClick={onOpenVideo}
-        aria-label="Take a trip to the wonderful world of maple!"
+        aria-label="Explore the 2.5D Motor Playground · MotionForge"
       >
         <span className="c-circle-button_wrap">
           <span className="c-circle-button_icon">
@@ -26,7 +26,7 @@ export default function CircleButton({ onOpenVideo }) {
                   />
                 </defs>
                 <text className="c-circle-button_text">
-                  <textPath href="#circle-text-path">TAKE A TRIP TO THE WONDERFUL WORLD OF MAPLE!</textPath>
+                  <textPath href="#circle-text-path">EXPLORE THE 2.5D MOTOR PLAYGROUND · MOTIONFORGE · </textPath>
                 </text>
               </svg>
             </span>

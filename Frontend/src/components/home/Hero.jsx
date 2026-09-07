@@ -15,11 +15,11 @@ export default function Hero({ onOpenVideo }) {
         <SplitText
           as="h1"
           className="c-home_main_title c-heading -h1"
-          text="Welcome to the Wonderful World of Maple!"
+          text="Move Your Hand. Grab Objects. Get Real Feedback!"
         />
         <CircleButton onOpenVideo={onOpenVideo} />
         <div className="c-home_main_mascot">
-          <img src="assets/mascot.svg" alt="Maple Mascot" />
+          <img src="assets/mascot.svg" alt="MotionForge Playground Mascot" />
         </div>
         <div className="c-home_main_drops">
           <Drops items={HERO_DROPS} />

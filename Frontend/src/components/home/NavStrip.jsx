@@ -9,16 +9,16 @@ import { SLIDES } from '../../data/content.js';
  * decide which buttons carry .is-active after a goto().
  */
 const NAV_BUTTONS = [
-  [{ label: 'Educators', goto: 'c-home-section-12', id: null, cls: 'u-bg-green' }],
+  [{ label: 'Playroom', goto: 'c-home-section-12', id: null, cls: 'u-bg-green' }],
   [
-    { label: 'Pupils', goto: 'c-home-section-14', id: 'c-home-section-12', cls: 'u-bg-red' },
-    { label: 'Educators', goto: 'c-home-section-12', id: 'c-home-section-16', cls: 'u-bg-green' },
-    { label: 'Junior Chefs', goto: 'c-home-section-16', id: 'c-home-section-14', cls: 'u-bg-yellow' },
+    { label: 'Tracking', goto: 'c-home-section-14', id: 'c-home-section-12', cls: 'u-bg-red' },
+    { label: 'Playroom', goto: 'c-home-section-12', id: 'c-home-section-16', cls: 'u-bg-green' },
+    { label: 'Feedback', goto: 'c-home-section-16', id: 'c-home-section-14', cls: 'u-bg-yellow' },
   ],
   [
-    { label: 'Junior Chefs', goto: 'c-home-section-16', id: 'c-home-section-12', cls: 'u-bg-yellow' },
-    { label: 'Educators', goto: 'c-home-section-12', id: 'c-home-section-14', cls: 'u-bg-green' },
-    { label: 'Pupils', goto: 'c-home-section-14', id: 'c-home-section-16', cls: 'u-bg-red' },
+    { label: 'Feedback', goto: 'c-home-section-16', id: 'c-home-section-12', cls: 'u-bg-yellow' },
+    { label: 'Playroom', goto: 'c-home-section-12', id: 'c-home-section-14', cls: 'u-bg-green' },
+    { label: 'Tracking', goto: 'c-home-section-14', id: 'c-home-section-16', cls: 'u-bg-red' },
   ],
 ];
 
